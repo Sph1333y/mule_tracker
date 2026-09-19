@@ -278,7 +278,74 @@ export interface CaseEvidence {
   timeline: { date: string; event: string }[];
 }
 
+export interface ModalityContribution {
+  modality: string;
+  normalized_value: number;
+  configured_weight: number;
+  effective_weight: number;
+  weighted_score: number;
+  is_available: boolean;
+  explanation: string;
+}
+
+export interface IntelligenceEvidenceItem {
+  evidence_id: string;
+  category: string;
+  title: string;
+  description: string;
+  severity: string;
+  source: string;
+  source_reference?: string | null;
+  transaction_ids: string[];
+  account_ids: string[];
+  device_ids: string[];
+  ip_addresses: string[];
+  timestamps: string[];
+  metrics: Record<string, unknown>;
+}
+
+export interface IntelligenceKeyFinding {
+  finding: string;
+  evidence_ids: string[];
+  severity: string;
+  category: string;
+  source: string;
+  metrics: Record<string, unknown>;
+}
+
+export interface IntelligenceSuggestedAction {
+  action_id: string;
+  title: string;
+  description: string;
+  priority: string;
+  action_type: string;
+  related_evidence_ids: string[];
+}
+
+export interface InvestigationIntelligence {
+  case_id: string;
+  subject_id: string;
+  transaction_id?: string | null;
+  composite_risk_score: number;
+  risk_level: string;
+  risk_contributions: ModalityContribution[];
+  total_evidence_count: number;
+  severity_counts: Record<string, number>;
+  evidence_items: IntelligenceEvidenceItem[];
+  evidence_summary: string;
+  risk_summary: string;
+  investigation_summary: string;
+  key_findings: IntelligenceKeyFinding[];
+  suggested_next_steps: IntelligenceSuggestedAction[];
+  evidence_references: string[];
+  follow_up_questions: string[];
+  limitations: string[];
+  generated_at: string;
+  is_degraded: boolean;
+}
+
 // -----------------------------------------------------------------------------
+
 // Reports & Victim Complaints
 // -----------------------------------------------------------------------------
 export interface ReportRead {

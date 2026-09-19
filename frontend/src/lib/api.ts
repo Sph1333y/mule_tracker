@@ -19,6 +19,7 @@ import type {
   ReportRead,
   ReportGenerateRequest,
   InvestigationCase,
+  InvestigationIntelligence,
   VictimComplaintSubmit,
   VictimComplaintResponse,
   ComplaintStatusResponse,
@@ -278,8 +279,196 @@ export async function updateInvestigationCase(
   });
 }
 
-// -----------------------------------------------------------------------------
-// Reports
+export function getMockInvestigationIntelligence(caseNumber: string): InvestigationIntelligence {
+  const isCritical = caseNumber === "CAS-2025-0045";
+  const isHigh = caseNumber === "CAS-2025-0046" || caseNumber === "CAS-2025-0047";
+  const score = isCritical ? 0.865 : isHigh ? 0.742 : 0.485;
+  const level = isCritical ? "CRITICAL" : isHigh ? "HIGH" : "MEDIUM";
+  const subjectId = caseNumber === "CAS-2025-0046" ? "ACC-1002" : "ACC-1001";
+
+  return {
+    case_id: caseNumber,
+    subject_id: subjectId,
+    transaction_id: "TXN-M13-DEMO-001",
+    composite_risk_score: score,
+    risk_level: level,
+    risk_contributions: [
+      {
+        modality: "MODULAR_RULES",
+        normalized_value: 0.90,
+        configured_weight: 0.25,
+        effective_weight: 0.25,
+        weighted_score: 0.225,
+        is_available: true,
+        explanation: "Rule violations detected: High velocity rapid pass-through and structuring patterns.",
+      },
+      {
+        modality: "TEMPORAL_ENGINE",
+        normalized_value: 0.85,
+        configured_weight: 0.20,
+        effective_weight: 0.20,
+        weighted_score: 0.170,
+        is_available: true,
+        explanation: "Temporal anomaly: Rapid succession of in-and-out transfers within 12 minutes.",
+      },
+      {
+        modality: "GRAPH_ENGINE",
+        normalized_value: 0.88,
+        configured_weight: 0.25,
+        effective_weight: 0.25,
+        weighted_score: 0.220,
+        is_available: true,
+        explanation: "Topology: High fan-in ratio (4:1) and hub centrality in mule ring component.",
+      },
+      {
+        modality: "TABULAR_ML_XGBOOST",
+        normalized_value: 0.82,
+        configured_weight: 0.15,
+        effective_weight: 0.15,
+        weighted_score: 0.123,
+        is_available: true,
+        explanation: "XGBoost tabular classifier scored high probability of mule account behavior.",
+      },
+      {
+        modality: "GRAPH_ML_GRAPHSAGE",
+        normalized_value: 0.84,
+        configured_weight: 0.15,
+        effective_weight: 0.15,
+        weighted_score: 0.126,
+        is_available: true,
+        explanation: "GraphSAGE embedding indicates high similarity to confirmed mule network subgraphs.",
+      },
+    ],
+    total_evidence_count: 3,
+    severity_counts: { CRITICAL: 1, HIGH: 2, MEDIUM: 0, LOW: 0 },
+    evidence_items: [
+      {
+        evidence_id: "EVID-M13-001",
+        category: "RAPID_PASSTHROUGH",
+        title: "Rapid Fund Pass-Through Velocity",
+        description: "Inbound funds disbursed within 300 seconds across 4 external beneficiary accounts.",
+        severity: "CRITICAL",
+        source: "TEMPORAL_INTELLIGENCE",
+        source_reference: "TI-PASS-01",
+        transaction_ids: ["TXN-M13-DEMO-001", "TXN-M13-DEMO-002"],
+        account_ids: [subjectId, "ACC-1002"],
+        device_ids: ["DEV-9921"],
+        ip_addresses: ["192.168.1.45"],
+        timestamps: [new Date().toISOString()],
+        metrics: { turnover_ratio: 0.94, delta_seconds: 240 },
+      },
+      {
+        evidence_id: "EVID-M13-002",
+        category: "FAN_IN_COLLECTOR",
+        title: "Fan-In Aggregation Hub",
+        description: "Account acts as a central collector node aggregating micro-deposits from multiple senders.",
+        severity: "HIGH",
+        source: "GRAPH_INTELLIGENCE",
+        source_reference: "GI-FANIN-04",
+        transaction_ids: ["TXN-M13-DEMO-003"],
+        account_ids: [subjectId],
+        device_ids: [],
+        ip_addresses: ["10.0.0.12"],
+        timestamps: [new Date().toISOString()],
+        metrics: { in_degree: 5, out_degree: 1 },
+      },
+      {
+        evidence_id: "EVID-M13-003",
+        category: "MULE_STRUCTURING",
+        title: "Sub-Threshold Structuring Pattern",
+        description: "Multiple transfers kept immediately below the statutory reporting threshold.",
+        severity: "HIGH",
+        source: "MODULAR_RULES",
+        source_reference: "RULE-STRUCT-99",
+        transaction_ids: ["TXN-M13-DEMO-004", "TXN-M13-DEMO-005"],
+        account_ids: [subjectId],
+        device_ids: [],
+        ip_addresses: [],
+        timestamps: [new Date().toISOString()],
+        metrics: { amount_avg: 49200, count: 4 },
+      },
+    ],
+    evidence_summary: "3 auditable evidence items identified spanning rapid pass-through, fan-in aggregation, and structuring.",
+    risk_summary: "High risk multi-modal detection supported by rule violations, temporal velocity, and graph topology.",
+    investigation_summary: "Subject demonstrates behavioral patterns consistent with a rapid-pass-through mule account. Inbound funds are rapidly distributed to downstream accounts with minimal balance retention. Graph topology reveals strong hub connectivity to known suspicious clusters.",
+    key_findings: [
+      {
+        finding: "High-velocity pass-through of funds completed across multiple transactions within a short window.",
+        evidence_ids: ["EVID-M13-001"],
+        severity: "CRITICAL",
+        category: "RAPID_PASSTHROUGH",
+        source: "TEMPORAL_INTELLIGENCE",
+        metrics: { turnover_ratio: 0.94 },
+      },
+      {
+        finding: "Topological fan-in collector pattern concentrating inbound flows from disparate accounts.",
+        evidence_ids: ["EVID-M13-002"],
+        severity: "HIGH",
+        category: "FAN_IN_COLLECTOR",
+        source: "GRAPH_INTELLIGENCE",
+        metrics: { in_degree: 5 },
+      },
+    ],
+    suggested_next_steps: [
+      {
+        action_id: "ACT-001",
+        title: "Apply Immediate Debit Freeze",
+        description: "Place immediate debit restriction on primary account to prevent further asset dissipation.",
+        priority: "IMMEDIATE",
+        action_type: "RESTRICT_ACCOUNT",
+        related_evidence_ids: ["EVID-M13-001"],
+      },
+      {
+        action_id: "ACT-002",
+        title: "File Suspicious Activity Report (SAR / STR)",
+        description: "Draft and transmit statutory regulatory report citing structuring and rapid transit evidence.",
+        priority: "HIGH",
+        action_type: "FILE_SAR",
+        related_evidence_ids: ["EVID-M13-001", "EVID-M13-003"],
+      },
+      {
+        action_id: "ACT-003",
+        title: "Subpoena Device & IP Session Logs",
+        description: "Extract associated device fingerprints and coordinate with upstream network providers.",
+        priority: "MEDIUM",
+        action_type: "REQUEST_INFO",
+        related_evidence_ids: ["EVID-M13-002"],
+      },
+    ],
+    evidence_references: ["EVID-M13-001", "EVID-M13-002", "EVID-M13-003"],
+    follow_up_questions: [
+      "Are there shared device fingerprints between the sender accounts and the collector node?",
+      "What is the historical average balance of the account prior to the activation spike?",
+      "Has KYC documentation been recently updated or re-verified for this account?",
+    ],
+    limitations: [
+      "[OFFLINE / DEMO FALLBACK] Showing simulated benchmark fallback data because backend intelligence pipeline is offline or disconnected.",
+      "Risk assessment is based strictly on observable transaction records within the active ingestion window.",
+      "Graph ML embedding distances are calculated relative to locally indexed subgraph components.",
+    ],
+    generated_at: new Date().toISOString(),
+    is_degraded: true,
+  };
+}
+
+export async function fetchCaseIntelligence(caseNumber: string): Promise<BaseResponse<InvestigationIntelligence>> {
+  if (USE_MOCK) {
+    return {
+      success: true,
+      message: "Mock intelligence loaded",
+      data: getMockInvestigationIntelligence(caseNumber),
+    };
+  }
+  try {
+    return await apiFetch<BaseResponse<InvestigationIntelligence>>(`/api/v1/investigations/${caseNumber}/intelligence`);
+  } catch {
+    return {
+      success: true,
+      message: "Offline: using fallback intelligence",
+      data: getMockInvestigationIntelligence(caseNumber),
+    };
+  }
+}
 // -----------------------------------------------------------------------------
 export async function fetchReports(params?: {
   page?: number;
