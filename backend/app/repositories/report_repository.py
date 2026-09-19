@@ -85,6 +85,7 @@ class ReportRepository:
         stmt = (
             select(Report)
             .where(Report.report_type == "VICTIM_COMPLAINT")
+            .where(Report.summary_text.like(f'%"{email}"%'))
             .where(
                 cast(Report.summary_text, JSONB)["victim_email"].astext == email
             )

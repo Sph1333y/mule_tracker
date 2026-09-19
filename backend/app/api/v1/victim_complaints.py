@@ -9,7 +9,7 @@ from __future__ import annotations
 
 
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Response
 
 from app.api.dependencies import get_victim_complaint_service
 from app.schemas.victim_complaint import VictimComplaintSubmit, VictimComplaintResponse
@@ -62,6 +62,7 @@ async def check_complaint_status(
     summary="List all complaints submitted by a victim email address",
 )
 async def list_complaints_by_email(
+    response: Response,
     email: str = Query(..., description="The victim's email address"),
     service: VictimComplaintService = Depends(get_victim_complaint_service),
 ) -> list[dict[str, Any]]:
@@ -70,4 +71,5 @@ async def list_complaints_by_email(
     matching the given email address. Used to populate the 'My Complaints'
     history page on the User Portal.
     """
+    response.headers["Cache-Control"] = "private, max-age=60"
     return await service.list_complaints_by_email(email)

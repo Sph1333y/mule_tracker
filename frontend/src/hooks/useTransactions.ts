@@ -24,11 +24,14 @@ export function useTransactions(params?: TransactionFilterParams & { page?: numb
   const [isLive, setIsLive] = useState(false);
   const isMounted = useRef(true);
 
+  const paramsString = JSON.stringify(params);
+
   const load = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     setError(null);
     try {
-      const res = await fetchTransactions(params);
+      const currentParams = paramsString ? JSON.parse(paramsString) : undefined;
+      const res = await fetchTransactions(currentParams);
       if (!isMounted.current) return;
       setTransactions(res.data || []);
       setPagination(res.pagination);
@@ -40,7 +43,7 @@ export function useTransactions(params?: TransactionFilterParams & { page?: numb
       if (!isMounted.current) return;
       if (!silent) setLoading(false);
     }
-  }, [params]); // Be careful with object equality of params in dependency array
+  }, [paramsString]);
 
   useEffect(() => {
     isMounted.current = true;

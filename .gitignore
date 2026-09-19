@@ -7,6 +7,8 @@ venv/
 venv_new/
 .venv/
 env/
+py310env/
+*venv*/
 __pycache__/
 *.pyc
 *.pyo
@@ -22,10 +24,12 @@ node_modules/
 dist/
 build/
 
-# Environment files
+# Environment files & Secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+*.pem
+*.key
 
 # IDE
 .vscode/
@@ -35,3 +39,4 @@ build/
 
 # OS
 Thumbs.db
+
