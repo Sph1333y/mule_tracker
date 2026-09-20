@@ -118,42 +118,45 @@ function ComplaintDetailModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed left-1/2 top-1/2 z-50 w-[620px] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 animate-slide-up overflow-y-auto">
-        <div className="glass-card p-6">
+      <div className="fixed inset-0 z-40 bg-black/70" onClick={onClose} />
+      <div className="fixed left-1/2 top-1/2 z-50 w-[580px] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 animate-fade-in overflow-y-auto">
+        <div className="rounded-[4px] border border-navy-700 bg-navy-900/95 p-5 shadow-2xl">
           {/* Header */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
-                <MessageSquareWarning className="h-5 w-5" />
+          <div className="flex items-center justify-between mb-4 border-b border-navy-700/80 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                <MessageSquareWarning className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h3 className="font-display text-lg font-bold text-white">Victim Complaint</h3>
+                <h3 className="font-mono text-xs uppercase tracking-wider font-semibold text-white">Victim Grievance Intake</h3>
                 <p className="text-xs font-mono text-emerald-400">{report.report_number}</p>
               </div>
             </div>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-navy-700 hover:text-white">
-              <X className="h-5 w-5" />
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Complaint title */}
-          <div className="mb-4 rounded-lg border border-navy-600 bg-navy-800/50 p-3">
-            <p className="text-xs text-slate-500 mb-1">Title</p>
-            <p className="text-sm font-medium text-white">{report.title}</p>
+          <div className="mb-3 rounded-[3px] border border-navy-700 bg-navy-950/60 p-2.5">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-0.5">Complaint Title</p>
+            <p className="text-xs font-medium text-white">{report.title}</p>
           </div>
 
           {/* Fields Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-2.5 mb-3">
             {fields.map((field) => {
               const Icon = field.icon;
               return (
-                <div key={field.label} className="rounded-lg border border-navy-600 bg-navy-800/50 p-3">
-                  <div className="flex items-center gap-1.5 mb-1">
+                <div key={field.label} className="rounded-[3px] border border-navy-700 bg-navy-950/60 p-2.5">
+                  <div className="flex items-center gap-1.5 mb-0.5">
                     <Icon className="h-3 w-3 text-slate-500" />
-                    <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">{field.label}</p>
+                    <p className="text-[10px] uppercase font-mono tracking-wider text-slate-500">{field.label}</p>
                   </div>
-                  <p className="text-xs font-medium text-white">{field.value || "—"}</p>
+                  <p className="text-xs font-mono font-medium text-white truncate">{field.value || "—"}</p>
                 </div>
               );
             })}
@@ -161,34 +164,37 @@ function ComplaintDetailModal({
 
           {/* Description */}
           {complaint?.description && (
-            <div className="mb-5 rounded-lg border border-navy-600 bg-navy-800/50 p-3">
-              <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Description</p>
-              <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">{complaint.description}</p>
+            <div className="mb-4 rounded-[3px] border border-navy-700 bg-navy-950/60 p-2.5">
+              <p className="text-[10px] uppercase font-mono tracking-wider text-slate-500 mb-1">Grievance Narrative</p>
+              <p className="text-xs text-slate-300 font-mono leading-relaxed whitespace-pre-wrap">{complaint.description}</p>
             </div>
           )}
 
           {/* Status + Submitted */}
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center justify-between text-xs font-mono mb-4 border-t border-navy-800 pt-2.5">
             <span className={cn("badge", getStatusColor(report.status))}>{report.status}</span>
-            <span className="text-xs text-slate-500">Submitted: {formatDate(report.generated_at)}</span>
+            <span className="text-[11px] text-slate-400">SUBMITTED: {formatDate(report.generated_at)}</span>
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 border-t border-navy-600/50 pt-4">
-            <button onClick={onClose} className="rounded-lg border border-navy-600 px-4 py-2 text-sm text-slate-400 hover:bg-navy-700">
+          <div className="flex justify-end gap-2 border-t border-navy-700/80 pt-3">
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700 bg-navy-800/80 px-3 py-1.5 font-mono text-xs text-slate-300 hover:bg-navy-700 hover:text-white transition-colors"
+            >
               Close
             </button>
             <button
               onClick={handleGenerateReport}
               disabled={generating}
-              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-glow hover:bg-accent/90 transition-all disabled:opacity-40"
+              className="flex items-center gap-2 rounded-[3px] bg-indigo-600 px-3.5 py-1.5 font-mono text-xs font-medium text-white hover:bg-indigo-500 transition-colors disabled:opacity-40"
             >
               {generating ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-3.5 w-3.5" />
               )}
-              Generate Investigation Report
+              Generate Forensic Report
             </button>
           </div>
         </div>
@@ -198,8 +204,7 @@ function ComplaintDetailModal({
 }
 
 // -----------------------------------------------------------------------------
-// Report Generator Modal (existing)
-// -----------------------------------------------------------------------------
+// Report Generator Modal
 // -----------------------------------------------------------------------------
 function ReportGeneratorModal({
   onClose,
@@ -235,25 +240,28 @@ function ReportGeneratorModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed left-1/2 top-1/2 z-50 w-[560px] -translate-x-1/2 -translate-y-1/2 animate-slide-up">
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-5">
+      <div className="fixed inset-0 z-40 bg-black/70" onClick={onClose} />
+      <div className="fixed left-1/2 top-1/2 z-50 w-[540px] -translate-x-1/2 -translate-y-1/2 animate-fade-in">
+        <div className="rounded-[4px] border border-navy-700 bg-navy-900/95 p-5 shadow-2xl">
+          <div className="flex items-center justify-between mb-4 border-b border-navy-700/80 pb-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
-                <FileText className="h-4 w-4" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-indigo-500/30 bg-indigo-500/10 text-indigo-400">
+                <FileText className="h-3.5 w-3.5" />
               </div>
-              <h3 className="font-display text-lg font-bold text-white">Generate Report</h3>
+              <h3 className="font-mono text-xs uppercase tracking-wider font-semibold text-white">Generate Regulatory Filing</h3>
             </div>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-navy-700 hover:text-white">
-              <X className="h-5 w-5" />
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Report Type */}
-          <div className="mb-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Report Type
+          <div className="mb-3.5">
+            <label className="mb-1.5 block text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              Regulatory Report Type
             </label>
             <div className="grid grid-cols-2 gap-2">
               {reportTypes.map((rt) => (
@@ -261,64 +269,67 @@ function ReportGeneratorModal({
                   key={rt.value}
                   onClick={() => setReportType(rt.value)}
                   className={cn(
-                    "rounded-lg border p-3 text-left transition-all",
+                    "rounded-[3px] border p-2.5 text-left transition-colors font-mono",
                     reportType === rt.value
-                      ? "border-accent/50 bg-accent/10"
-                      : "border-navy-600 bg-navy-800 hover:border-navy-500"
+                      ? "border-indigo-500 bg-indigo-500/15 text-white"
+                      : "border-navy-700 bg-navy-950/60 text-slate-400 hover:border-navy-600 hover:bg-navy-900"
                   )}
                 >
                   <p className="text-xs font-semibold text-white">{rt.label}</p>
-                  <p className="mt-0.5 text-[10px] text-slate-500">{rt.desc}</p>
+                  <p className="mt-0.5 text-[10px] text-slate-400">{rt.desc}</p>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Title */}
-          <div className="mb-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Report Title
+          <div className="mb-3.5">
+            <label className="mb-1.5 block text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              Report Title & Case Reference
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., STR — Mule Ring Western Region"
-              className="w-full rounded-lg border border-navy-600 bg-navy-800 p-3 text-sm text-white placeholder:text-slate-600 focus:border-accent focus:outline-none"
+              placeholder="e.g., STR — Mule Ring Western Regional Corridor"
+              className="w-full rounded-[3px] border border-navy-700 bg-navy-950 p-2 font-mono text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
           {/* AI Narrative Notes */}
-          <div className="mb-5">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-accent-glow" />
-              Executive Narrative Notes
+          <div className="mb-4">
+            <label className="mb-1.5 block text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1">
+              <Sparkles className="h-3 w-3 text-indigo-400" />
+              Executive Narrative Notes / Evidence
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add investigation summary for AI narrative generation..."
+              placeholder="Add investigation details, evidence anchors, and justification..."
               rows={4}
-              className="w-full rounded-lg border border-navy-600 bg-navy-800 p-3 text-sm text-white placeholder:text-slate-600 focus:border-accent focus:outline-none resize-none"
+              className="w-full rounded-[3px] border border-navy-700 bg-navy-950 p-2 font-mono text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none resize-none"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3">
-            <button onClick={onClose} className="rounded-lg border border-navy-600 px-4 py-2 text-sm text-slate-400 hover:bg-navy-700">
+          <div className="flex justify-end gap-2 border-t border-navy-700/80 pt-3">
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700 bg-navy-800/80 px-3 py-1.5 font-mono text-xs text-slate-300 hover:bg-navy-700 hover:text-white transition-colors"
+            >
               Cancel
             </button>
             <button
               onClick={handleGenerate}
               disabled={!title.trim() || generating}
-              className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-glow hover:bg-accent/90 transition-all disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-[3px] bg-indigo-600 px-3.5 py-1.5 font-mono text-xs font-medium text-white hover:bg-indigo-500 transition-colors disabled:opacity-40"
             >
               {generating ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               )}
-              Generate Report
+              Generate Filing Package
             </button>
           </div>
         </div>
@@ -340,51 +351,48 @@ function ComplaintCard({
   const complaint = parseComplaintData(report.summary_text);
 
   return (
-    <div className="glass-card-sm group relative overflow-hidden rounded-xl border border-navy-600/50 bg-navy-800/40 p-4 transition-all hover:border-emerald-500/30 hover:bg-navy-800/60">
-      {/* Glow accent */}
-      <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-emerald-500/50 via-emerald-400/30 to-transparent" />
-
-      <div className="flex items-start justify-between mb-3">
+    <div className="group relative overflow-hidden rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5 transition-colors hover:border-emerald-500/40 hover:bg-navy-900/90">
+      <div className="flex items-start justify-between mb-2.5">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
-            <MessageSquareWarning className="h-4 w-4" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+            <MessageSquareWarning className="h-3.5 w-3.5" />
           </div>
           <div>
             <p className="font-mono text-xs text-emerald-400 font-medium">{report.report_number}</p>
-            <p className="text-[10px] text-slate-500">{formatDate(report.generated_at)}</p>
+            <p className="text-[10px] font-mono text-slate-500">{formatDate(report.generated_at)}</p>
           </div>
         </div>
-        <span className={cn("badge text-[10px]", getStatusColor(report.status))}>{report.status}</span>
+        <span className={cn("badge font-mono text-[10px]", getStatusColor(report.status))}>{report.status}</span>
       </div>
 
       {complaint && (
-        <div className="space-y-2 mb-3">
+        <div className="space-y-1.5 mb-3 text-xs">
           <div className="flex items-center gap-2">
-            <User className="h-3 w-3 text-slate-500" />
-            <span className="text-xs text-white font-medium">{complaint.victim_name}</span>
+            <User className="h-3 w-3 text-slate-500 shrink-0" />
+            <span className="text-white font-medium truncate">{complaint.victim_name}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-3 w-3 text-amber-400" />
-            <span className="text-xs text-amber-300">{complaint.incident_type?.replace(/_/g, " ")}</span>
+          <div className="flex items-center gap-2 font-mono text-[11px]">
+            <AlertTriangle className="h-3 w-3 text-amber-400 shrink-0" />
+            <span className="text-amber-300">{complaint.incident_type?.replace(/_/g, " ")}</span>
           </div>
           {complaint.amount_lost && (
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-3 w-3 text-red-400" />
-              <span className="text-xs text-red-300 font-medium">₹{complaint.amount_lost.toLocaleString("en-IN")}</span>
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <DollarSign className="h-3 w-3 text-red-400 shrink-0" />
+              <span className="text-red-300 font-semibold">₹{complaint.amount_lost.toLocaleString("en-IN")}</span>
             </div>
           )}
           {complaint.description && (
-            <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">{complaint.description}</p>
+            <p className="text-[11px] font-mono text-slate-400 line-clamp-2 leading-relaxed mt-1">{complaint.description}</p>
           )}
         </div>
       )}
 
       <button
         onClick={onView}
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-navy-500 bg-navy-700/50 px-3 py-1.5 text-xs font-medium text-slate-300 transition-all hover:border-emerald-500/40 hover:text-emerald-300"
+        className="flex w-full items-center justify-center gap-1.5 rounded-[3px] border border-navy-700 bg-navy-800/80 px-2.5 py-1.5 text-[11px] font-mono font-medium text-slate-300 transition-colors hover:border-emerald-500/40 hover:text-emerald-300"
       >
         <Eye className="h-3 w-3" />
-        View Details & Generate Report
+        Inspect Grievance & Generate
       </button>
     </div>
   );
@@ -496,101 +504,105 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="space-y-5 animate-fade-in">
-      <div className="page-header flex items-center justify-between">
+    <div className="space-y-4 animate-fade-in">
+      <div className="flex items-center justify-between">
         <div>
-          <p className="page-subtitle">
-            Manage compliance reports & victim complaints from the User Portal
+          <h1 className="text-lg font-bold font-mono tracking-tight text-white flex items-center gap-2">
+            <FileText className="h-5 w-5 text-accent-glow" />
+            COMPLIANCE & REGULATORY DOSSIERS
+          </h1>
+          <p className="text-xs text-slate-400 font-mono mt-0.5">
+            Statutory STR / CTR generation, cybercrime law enforcement packages, and victim complaint ingest
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-1.5 rounded-lg border border-navy-600 bg-navy-800 px-3 py-2 text-xs text-slate-400 hover:text-white hover:bg-navy-700 transition-all"
+            className="flex items-center gap-1.5 rounded-[3px] border border-navy-700 bg-navy-900/60 px-2.5 py-1.5 text-xs font-mono text-slate-300 hover:text-white hover:bg-navy-800 transition-colors"
           >
             <RefreshCw className="h-3.5 w-3.5" />
-            Refresh
+            REFRESH
           </button>
           <button
             onClick={() => setShowGenerator(true)}
-            className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-glow hover:bg-accent/90 transition-all"
+            className="flex items-center gap-1.5 rounded-[3px] bg-accent px-3 py-1.5 text-xs font-mono font-medium text-white hover:bg-accent/90 transition-colors shadow-sm"
           >
-            <Plus className="h-4 w-4" />
-            Generate Report
+            <Plus className="h-3.5 w-3.5" />
+            GENERATE REPORT
           </button>
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="glass-card flex items-center justify-between p-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">Type:</span>
+      {/* Filter Bar */}
+      <div className="border border-navy-700 bg-navy-900/50 p-3 rounded-[4px] flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Type:</span>
           {filterTypes.map((ft) => (
-          <button
-            key={ft.value}
-            onClick={() => setTypeFilter(ft.value)}
-            className={cn(
-              "rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
-              typeFilter === ft.value
-                ? "bg-accent/20 text-accent-glow border border-accent/30"
-                : "border border-navy-600 bg-navy-800 text-slate-400 hover:text-white"
-            )}
-          >
-            {ft.label}
-            {ft.value === "VICTIM_COMPLAINT" && victimComplaints.length > 0 && (
-              <span className="ml-1.5 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-emerald-500/20 px-1 text-[10px] text-emerald-400">
-                {victimComplaints.length}
-              </span>
-            )}
-          </button>
-        ))}
+            <button
+              key={ft.value}
+              onClick={() => setTypeFilter(ft.value)}
+              className={cn(
+                "rounded-[3px] px-2.5 py-1 text-[11px] font-mono transition-colors",
+                typeFilter === ft.value
+                  ? "bg-accent/20 text-accent-glow border border-accent/40 font-medium"
+                  : "border border-navy-700 bg-navy-800/60 text-slate-400 hover:text-slate-200"
+              )}
+            >
+              {ft.label}
+              {ft.value === "VICTIM_COMPLAINT" && victimComplaints.length > 0 && (
+                <span className="ml-1.5 inline-flex h-4 min-w-[16px] items-center justify-center rounded-[3px] bg-emerald-500/20 px-1 text-[10px] font-mono text-emerald-400 border border-emerald-500/30">
+                  {victimComplaints.length}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
         
         <div className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold border",
-          isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-slate-500/10 text-slate-400 border-slate-500/20"
+          "flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] text-[10px] font-mono font-medium border",
+          isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-slate-500/10 text-slate-400 border-slate-500/30"
         )}>
           <span className="relative flex h-1.5 w-1.5">
             {isLive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
             <span className={cn("relative inline-flex rounded-full h-1.5 w-1.5", isLive ? "bg-emerald-500" : "bg-slate-500")}></span>
           </span>
-          {isLive ? "LIVE" : "OFFLINE / MOCK"}
+          {isLive ? "DATA: LIVE" : "DATA: OFFLINE / MOCK"}
         </div>
       </div>
 
       {loading ? (
         <div className="space-y-3">
-          {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-20 rounded-xl" />)}
+          {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-20 rounded-[4px]" />)}
         </div>
       ) : (
         <>
           {/* ── Victim Complaints Section ── */}
           {(typeFilter === "" || typeFilter === "VICTIM_COMPLAINT") && (
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-3">
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2.5">
                 <ClipboardList className="h-4 w-4 text-emerald-400" />
-                <h2 className="text-sm font-semibold text-white">
+                <h2 className="text-xs font-mono uppercase tracking-wider text-slate-300 font-semibold">
                   Incoming Victim Complaints
                 </h2>
-                <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-emerald-500/20 px-1.5 text-[10px] font-bold text-emerald-400">
+                <span className="inline-flex h-4 min-w-[18px] items-center justify-center rounded-[3px] bg-emerald-500/20 px-1 text-[10px] font-mono font-bold text-emerald-400 border border-emerald-500/30">
                   {victimComplaints.length}
                 </span>
-                <div className="flex items-center gap-1 ml-2">
-                  <span className="relative flex h-2 w-2">
+                <div className="flex items-center gap-1.5 ml-2">
+                  <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                   </span>
-                  <span className="text-[10px] text-emerald-400/70">Live from User Portal</span>
+                  <span className="text-[10px] font-mono text-emerald-400/80">User Portal Feed</span>
                 </div>
                 {newComplaintCount > 0 && (
-                  <span className="ml-auto flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+                  <span className="ml-auto flex items-center gap-1 rounded-[3px] bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-medium text-emerald-400">
                     +{newComplaintCount} new since last view
                   </span>
                 )}
               </div>
               
               {victimComplaints.length === 0 ? (
-                <div className="glass-card p-10 text-center text-sm text-slate-500 border border-dashed border-emerald-500/20">
+                <div className="rounded-[4px] border border-dashed border-navy-700 bg-navy-900/30 p-8 text-center text-xs font-mono text-slate-500">
                   No victim complaints have been received yet from the User Portal.
                 </div>
               ) : (
@@ -609,17 +621,17 @@ export default function ReportsPage() {
 
           {/* ── Generated Reports Table ── */}
           {(typeFilter === "" || typeFilter !== "VICTIM_COMPLAINT") && (
-            <div className="glass-card overflow-hidden">
-              <div className="flex items-center gap-2 px-5 pt-4 pb-2">
+            <div className="border border-navy-700 bg-navy-900/50 rounded-[4px] overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-navy-700 bg-navy-900/80">
                 <FileText className="h-4 w-4 text-accent-glow" />
-                <h2 className="text-sm font-semibold text-white">Generated Reports</h2>
+                <h2 className="text-xs font-mono uppercase tracking-wider text-slate-300 font-semibold">Generated Compliance Reports</h2>
               </div>
               {generatedReports.length === 0 && typeFilter !== "" ? (
-                <div className="p-10 text-center text-sm text-slate-500">
+                <div className="p-8 text-center text-xs font-mono text-slate-500">
                   No reports found for this filter.
                 </div>
               ) : generatedReports.length === 0 ? (
-                <div className="p-10 text-center text-sm text-slate-500">
+                <div className="p-8 text-center text-xs font-mono text-slate-500">
                   No generated reports yet. Click &quot;Generate Report&quot; to create one.
                 </div>
               ) : (
@@ -638,7 +650,7 @@ export default function ReportsPage() {
                     <tbody>
                       {generatedReports.map((report) => (
                         <tr key={report.id}>
-                          <td className="font-mono text-xs text-accent-glow">{report.report_number}</td>
+                          <td className="font-mono text-xs text-accent-glow font-medium">{report.report_number}</td>
                           <td>
                             <span className={cn("badge", reportTypeColor[report.report_type] || "bg-slate-500/15 text-slate-400 border-slate-500/30")}>
                               {report.report_type}
@@ -647,26 +659,26 @@ export default function ReportsPage() {
                           <td className="max-w-[280px]">
                             <p className="text-xs font-medium text-white truncate">{report.title}</p>
                             {report.summary_text && (
-                              <p className="mt-0.5 text-[11px] text-slate-500 truncate max-w-[280px]">{report.summary_text}</p>
+                              <p className="mt-0.5 text-[11px] text-slate-400 truncate max-w-[280px] font-mono">{report.summary_text}</p>
                             )}
                           </td>
                           <td>
                             <span className={cn("badge", getStatusColor(report.status))}>{report.status}</span>
                           </td>
-                          <td className="text-xs text-slate-500">{formatDate(report.generated_at)}</td>
+                          <td className="text-xs text-slate-400 font-mono">{formatDate(report.generated_at)}</td>
                           <td>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5">
                               {report.file_path && (
                                 <button
                                   onClick={() => handleDownloadPdf(report)}
-                                  className="flex items-center gap-1 rounded-lg border border-navy-600 bg-navy-800 px-2 py-1 text-xs text-slate-400 hover:text-white hover:bg-navy-700"
+                                  className="flex items-center gap-1 rounded-[3px] border border-navy-700 bg-navy-800/80 px-2 py-0.5 text-[10px] font-mono text-slate-300 hover:text-white hover:bg-navy-700 transition-colors"
                                 >
                                   <Download className="h-3 w-3" /> PDF
                                 </button>
                               )}
                               <button
                                 onClick={() => handleDownloadJson(report)}
-                                className="flex items-center gap-1 rounded-lg border border-navy-600 bg-navy-800 px-2 py-1 text-xs text-slate-400 hover:text-white hover:bg-navy-700"
+                                className="flex items-center gap-1 rounded-[3px] border border-navy-700 bg-navy-800/80 px-2 py-0.5 text-[10px] font-mono text-slate-300 hover:text-white hover:bg-navy-700 transition-colors"
                               >
                                 <FileJson className="h-3 w-3" /> JSON
                               </button>
