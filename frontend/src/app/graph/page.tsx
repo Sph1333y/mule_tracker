@@ -79,6 +79,7 @@ export default function GraphPage() {
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiSummary, setAiSummary] = useState("");
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Zustand Store
   const {
@@ -106,10 +107,13 @@ export default function GraphPage() {
 
   // Load Graph Data
   useEffect(() => {
+    let isMounted = true;
     fetchGraph().then((res) => {
+      if (!isMounted) return;
       setGraphData(res.data);
       setLoading(false);
     });
+    return () => { isMounted = false; };
   }, []);
 
   // Compute Spaced Cytoscape Elements (High Performance Chunking for 60 FPS)
@@ -207,10 +211,12 @@ export default function GraphPage() {
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current || loading) return;
 
+    let isCancelled = false;
     let cyInstance: { destroy: () => void } | null = null;
 
     Promise.all([import("cytoscape"), import("cytoscape-fcose")]).then(
       ([cytoscapeModule, fcoseModule]) => {
+        if (isCancelled || !containerRef.current) return;
         const cytoscape = cytoscapeModule.default;
         const fcose = fcoseModule.default;
 
@@ -296,6 +302,11 @@ export default function GraphPage() {
           ],
         });
 
+        if (isCancelled) {
+          cy.destroy();
+          return;
+        }
+
         cyRef.current = cy as unknown as Record<string, unknown>;
         cyInstance = cy;
 
@@ -369,9 +380,11 @@ export default function GraphPage() {
     );
 
     return () => {
+      isCancelled = true;
       if (cyInstance) {
         cyInstance.destroy();
       }
+      cyRef.current = null;
     };
   }, [filteredElements, loading, setHoveredNode, setSelectedNode]);
 
@@ -425,7 +438,8 @@ export default function GraphPage() {
     if (!selectedNode) return;
     setIsGeneratingAi(true);
     setShowAiModal(true);
-    setTimeout(() => {
+    if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+    aiTimerRef.current = setTimeout(() => {
       setAiSummary(
         `AI Forensic Intelligence Brief — ${selectedNode.label}\n\n` +
         `• Primary Fraud Classifier: ${selectedNode.is_mule ? "CRITICAL MULE HUB (99.2% Fraud Confidence)" : "HIGH RISK NODE"} (Score: ${selectedNode.risk_score}/100)\n` +
@@ -436,6 +450,7 @@ export default function GraphPage() {
         `Recommended Action: Execute Immediate PMLA Debit Freeze and Dispatch STR Payload to FIU-IND.`
       );
       setIsGeneratingAi(false);
+      aiTimerRef.current = null;
     }, 1100);
   };
 
@@ -448,6 +463,13 @@ export default function GraphPage() {
       link.click();
     }
   };
+
+  // Cleanup AI timer on unmount
+  useEffect(() => {
+    return () => {
+      if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+    };
+  }, []);
 
   if (loading || !graphData) {
     return (

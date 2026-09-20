@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Briefcase,
   AlertTriangle,
@@ -72,26 +72,35 @@ function InvestigationIntelligencePanel({ caseNumber }: { caseNumber: string }) 
   const [intel, setIntel] = useState<InvestigationIntelligence | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isMounted = useRef(true);
 
   const loadIntel = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetchCaseIntelligence(caseNumber);
+      if (!isMounted.current) return;
       if (res.data) {
         setIntel(res.data);
       } else {
         setError("No intelligence data returned for this case.");
       }
     } catch (err) {
+      if (!isMounted.current) return;
       setError(err instanceof Error ? err.message : "Failed to load intelligence");
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }, [caseNumber]);
 
   useEffect(() => {
+    isMounted.current = true;
     loadIntel();
+    return () => {
+      isMounted.current = false;
+    };
   }, [loadIntel]);
 
   if (loading) {

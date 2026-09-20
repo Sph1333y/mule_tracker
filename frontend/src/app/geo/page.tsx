@@ -31,17 +31,34 @@ export default function GeoPage() {
   const [leafletReady, setLeafletReady] = useState(false);
 
   useEffect(() => {
-    // Load leaflet CSS
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    document.head.appendChild(link);
+    let isMounted = true;
+
+    // Load leaflet CSS — only inject if not already present
+    let link: HTMLLinkElement | null = document.querySelector(
+      'link[href*="leaflet"]'
+    );
+    let didInject = false;
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+      didInject = true;
+    }
     setLeafletReady(true);
 
     fetchGeo().then((res) => {
+      if (!isMounted) return;
       setData(res.data);
       setLoading(false);
     });
+
+    return () => {
+      isMounted = false;
+      if (didInject && link && link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    };
   }, []);
 
   if (loading || !data || !leafletReady) {
