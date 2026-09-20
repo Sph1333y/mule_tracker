@@ -461,23 +461,23 @@ export default function GraphPage() {
   return (
     <div
       className={cn(
-        "relative flex flex-col bg-[#090B12] text-slate-100 font-sans transition-all overflow-hidden selection:bg-accent/30",
-        isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "h-[calc(100vh-80px)] rounded-2xl border border-navy-700/60"
+        "relative flex flex-col bg-[#090B12] text-slate-100 font-sans transition-all overflow-hidden selection:bg-indigo-500/30",
+        isFullscreen ? "fixed inset-0 z-50 h-screen w-screen" : "h-[calc(100vh-80px)] rounded-md border border-navy-700/80"
       )}
     >
       {/* ------------------------------------------------------------------- */}
       {/* Top Floating Investigation Toolbar */}
       {/* ------------------------------------------------------------------- */}
-      <div className="absolute left-6 top-6 z-20 flex flex-wrap items-center gap-2.5 rounded-xl border border-white/10 bg-navy-900/85 p-2.5 shadow-2xl backdrop-blur-2xl">
+      <div className="absolute left-4 top-4 z-20 flex flex-wrap items-center gap-2 rounded-[4px] border border-navy-700 bg-navy-900/95 p-1.5 shadow-xl">
         {/* Search */}
-        <div className="relative min-w-[210px]">
-          <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+        <div className="relative min-w-[200px]">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search Account, Device, Wallet, IP..."
+            placeholder="Search Entity / Account ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-navy-600 bg-navy-950 py-1.5 pl-8 pr-3 text-xs text-white placeholder:text-slate-500 focus:border-accent focus:outline-none"
+            className="w-full rounded-[3px] border border-navy-700 bg-navy-950 py-1 pl-8 pr-2.5 text-xs font-mono text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>
 
@@ -485,23 +485,23 @@ export default function GraphPage() {
         <select
           value={filterRisk}
           onChange={(e) => setFilterRisk(e.target.value)}
-          className="rounded-lg border border-navy-600 bg-navy-950 px-2.5 py-1.5 text-xs text-slate-300 focus:border-accent focus:outline-none"
+          className="rounded-[3px] border border-navy-700 bg-navy-950 px-2 py-1 text-xs font-mono text-slate-300 focus:border-indigo-500 focus:outline-none"
         >
-          <option value="ALL">All Risk Levels</option>
-          <option value="CRITICAL">🔴 Critical (90+)</option>
-          <option value="HIGH">🟠 High (75-89)</option>
-          <option value="MEDIUM">🟡 Medium (45-74)</option>
-          <option value="LOW">🔵 Low (0-44)</option>
-          <option value="MULES_ONLY">🔥 Mule Hubs Only</option>
+          <option value="ALL">ALL RISKS</option>
+          <option value="CRITICAL">CRITICAL (90+)</option>
+          <option value="HIGH">HIGH (75-89)</option>
+          <option value="MEDIUM">MEDIUM (45-74)</option>
+          <option value="LOW">LOW (0-44)</option>
+          <option value="MULES_ONLY">MULE HUBS ONLY</option>
         </select>
 
         {/* Entity Type Filter */}
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="rounded-lg border border-navy-600 bg-navy-950 px-2.5 py-1.5 text-xs text-slate-300 focus:border-accent focus:outline-none"
+          className="rounded-[3px] border border-navy-700 bg-navy-950 px-2 py-1 text-xs font-mono text-slate-300 focus:border-indigo-500 focus:outline-none"
         >
-          <option value="ALL">All Entity Types</option>
+          <option value="ALL">ALL TYPES</option>
           <option value="account">Bank Accounts</option>
           <option value="customer">Customers</option>
           <option value="device">Devices</option>
@@ -512,21 +512,21 @@ export default function GraphPage() {
         </select>
 
         {/* Hop Level Progressive Rendering Selector */}
-        <div className="flex items-center gap-1 rounded-lg border border-navy-600 bg-navy-950 px-1.5 py-1 text-xs">
-          <span className="text-[10px] font-bold text-slate-400 px-1">Hop:</span>
+        <div className="flex items-center gap-1 rounded-[3px] border border-navy-700 bg-navy-950 px-1.5 py-0.5 text-xs">
+          <span className="text-[10px] font-mono text-slate-500 px-1 uppercase">Hop:</span>
           {[
-            { level: 1, label: "1-Hop" },
-            { level: 2, label: "2-Hop" },
-            { level: 3, label: "3-Hop" },
-            { level: 99, label: "Full" },
+            { level: 1, label: "1" },
+            { level: 2, label: "2" },
+            { level: 3, label: "3" },
+            { level: 99, label: "All" },
           ].map((h) => (
             <button
               key={h.level}
               onClick={() => setHopLevel(h.level)}
               className={cn(
-                "rounded px-2 py-0.5 font-bold transition-all",
+                "rounded-[2px] px-1.5 py-0.5 font-mono text-[11px] transition-colors",
                 hopLevel === h.level
-                  ? "bg-accent text-white shadow-glow-sm"
+                  ? "bg-indigo-600 text-white font-semibold"
                   : "text-slate-400 hover:text-white"
               )}
             >
@@ -535,21 +535,21 @@ export default function GraphPage() {
           ))}
         </div>
 
-        <div className="h-4 w-px bg-navy-600" />
+        <div className="h-4 w-px bg-navy-700" />
 
         {/* Control Buttons */}
         <button
           onClick={() => (cyRef.current as any)?.fit(undefined, 80)}
           title="Center Graph (Space)"
-          className="flex h-7 w-7 items-center justify-center rounded-lg border border-navy-600 bg-navy-950 text-slate-400 hover:text-white"
+          className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-navy-700 bg-navy-950 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
         >
           <RotateCcw className="h-3.5 w-3.5" />
         </button>
 
         <button
           onClick={handleDownloadPng}
-          title="Download PNG"
-          className="flex h-7 w-7 items-center justify-center rounded-lg border border-navy-600 bg-navy-950 text-slate-400 hover:text-white"
+          title="Export PNG"
+          className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-navy-700 bg-navy-950 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
         >
           <Download className="h-3.5 w-3.5" />
         </button>
@@ -557,7 +557,7 @@ export default function GraphPage() {
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
           title="Toggle Fullscreen"
-          className="flex h-7 w-7 items-center justify-center rounded-lg border border-navy-600 bg-navy-950 text-slate-400 hover:text-white"
+          className="flex h-7 w-7 items-center justify-center rounded-[3px] border border-navy-700 bg-navy-950 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
         >
           {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
         </button>
@@ -571,8 +571,8 @@ export default function GraphPage() {
       {/* ------------------------------------------------------------------- */}
       {/* Zoom Awareness Indicator */}
       {/* ------------------------------------------------------------------- */}
-      <div className="absolute top-6 right-6 z-20 rounded-lg border border-white/10 bg-navy-900/80 px-3 py-1.5 text-[10px] font-mono text-slate-400 backdrop-blur-md">
-        Zoom: {(zoomLevel * 100).toFixed(0)}% {zoomLevel < 0.35 && "· Labels Auto-Hidden"}
+      <div className="absolute top-4 right-4 z-20 rounded-[3px] border border-navy-700 bg-navy-900/95 px-2.5 py-1 text-[10px] font-mono text-slate-400">
+        ZOOM: {(zoomLevel * 100).toFixed(0)}% {zoomLevel < 0.35 && "· LABELS HIDDEN"}
       </div>
 
       {/* ------------------------------------------------------------------- */}
@@ -581,19 +581,30 @@ export default function GraphPage() {
       {hoveredNode && hoverPos && !selectedNode && (
         <div
           style={{ left: hoverPos.x + 20, top: hoverPos.y - 10 }}
-          className="pointer-events-none fixed z-40 w-72 rounded-xl border border-white/15 bg-navy-950/95 p-3.5 shadow-2xl backdrop-blur-2xl animate-fade-in text-xs"
+          className="pointer-events-none fixed z-40 w-72 rounded-[4px] border border-navy-700 bg-navy-950/95 p-3 shadow-xl animate-fade-in text-xs"
         >
           <div className="flex items-center justify-between pb-2 border-b border-navy-800">
-            <span className="font-bold text-white uppercase">{hoveredNode.type}</span>
+            <span className="font-mono text-[11px] font-semibold text-white uppercase">{hoveredNode.type}</span>
             <span className={cn("badge text-[9px]", getRiskBg(hoveredNode.risk_score >= 75 ? "CRITICAL" : "MEDIUM"))}>
-              Risk: {hoveredNode.risk_score}
+              RISK: {hoveredNode.risk_score}
             </span>
           </div>
-          <p className="mt-2 font-bold text-slate-200">{hoveredNode.label}</p>
-          <div className="mt-2 space-y-1 text-[11px] text-slate-400">
-            <p>Bank: <span className="text-white font-medium">{hoveredNode.bank || "N/A"}</span></p>
-            <p>SHAP Insight: <span className="text-amber-400 font-mono">Velocity + Rooted IP</span></p>
-            <p>Fraud Confidence: <span className="text-red-400 font-bold">{hoveredNode.is_mule ? "99.4%" : "12.8%"}</span></p>
+          <p className="mt-2 font-mono font-medium text-slate-200">{hoveredNode.label}</p>
+          <div className="mt-2 space-y-1 text-[11px]">
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-mono uppercase">Bank</span>
+              <span className="text-slate-300 font-medium">{hoveredNode.bank || "N/A"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-mono uppercase">SHAP</span>
+              <span className="text-amber-400 font-mono">Velocity + Rooted IP</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-mono uppercase">Mule Status</span>
+              <span className={hoveredNode.is_mule ? "text-red-400 font-mono font-semibold" : "text-slate-400 font-mono"}>
+                {hoveredNode.is_mule ? "CONFIRMED (99.4%)" : "UNFLAGGED"}
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -601,16 +612,16 @@ export default function GraphPage() {
       {/* ------------------------------------------------------------------- */}
       {/* Timeline Slider Control */}
       {/* ------------------------------------------------------------------- */}
-      <div className="absolute bottom-6 left-6 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-navy-900/90 p-2 shadow-2xl backdrop-blur-xl">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2">Timeline:</span>
+      <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-[4px] border border-navy-700 bg-navy-900/95 p-1.5 shadow-xl">
+        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 px-1">WINDOW:</span>
         {(['1H', '24H', '7D', '30D', '90D', 'ALL'] as TimelineRange[]).map((range) => (
           <button
             key={range}
             onClick={() => setTimelineRange(range)}
             className={cn(
-              "rounded-lg px-2.5 py-1 text-xs font-bold transition-all",
+              "rounded-[2px] px-2 py-0.5 text-[11px] font-mono transition-colors",
               timelineRange === range
-                ? "bg-accent/20 text-accent-glow border border-accent/40 shadow-glow-sm"
+                ? "bg-indigo-600 text-white font-semibold"
                 : "text-slate-400 hover:text-white"
             )}
           >
@@ -622,18 +633,18 @@ export default function GraphPage() {
       {/* ------------------------------------------------------------------- */}
       {/* Floating Bottom-Right Minimap Preview */}
       {/* ------------------------------------------------------------------- */}
-      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-2 rounded-xl border border-white/10 bg-navy-900/90 p-3 shadow-2xl backdrop-blur-xl w-56 text-xs">
-        <div className="flex items-center justify-between font-bold text-slate-300">
-          <span>Obsidian Free Space</span>
-          <span className="text-[10px] font-mono text-slate-500">Cytoscape</span>
+      <div className="absolute bottom-4 right-4 z-20 flex flex-col gap-2 rounded-[4px] border border-navy-700 bg-navy-900/95 p-2.5 shadow-xl w-52 text-xs">
+        <div className="flex items-center justify-between border-b border-navy-800 pb-1 font-mono text-[10px] uppercase text-slate-400">
+          <span>Legend</span>
+          <span className="text-slate-500">CYTOSCAPE</span>
         </div>
-        <div className="grid grid-cols-2 gap-1.5 text-[10px]">
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-blue-500" /> Customer</div>
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-blue-700" /> Account</div>
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-purple-500" /> Device</div>
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-orange-500" /> Wallet</div>
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-500" /> Merchant</div>
-          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-red-500" /> Fraud Mule</div>
+        <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-blue-500" /> Customer</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-blue-700" /> Account</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-purple-500" /> Device</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-orange-500" /> Wallet</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-emerald-500" /> Merchant</div>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px] bg-red-500" /> Mule Hub</div>
         </div>
       </div>
 
@@ -647,30 +658,33 @@ export default function GraphPage() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 400, opacity: 0 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute right-6 top-6 bottom-20 z-30 w-[400px] rounded-2xl border border-white/10 bg-navy-900/95 p-5 shadow-2xl backdrop-blur-2xl overflow-y-auto"
+            className="absolute right-4 top-4 bottom-16 z-30 w-[380px] rounded-[4px] border border-navy-700 bg-navy-950/95 p-4 shadow-2xl overflow-y-auto"
           >
-            <div className="flex items-start justify-between pb-4 border-b border-navy-700/60">
+            <div className="flex items-start justify-between pb-3 border-b border-navy-700/80">
               <div>
-                <span className={cn("badge text-[10px]", getRiskBg(selectedNode.risk_score >= 75 ? "CRITICAL" : "MEDIUM"))}>
+                <span className={cn("badge text-[9px]", getRiskBg(selectedNode.risk_score >= 75 ? "CRITICAL" : "MEDIUM"))}>
                   {selectedNode.type.toUpperCase()}
                 </span>
-                <h3 className="mt-1 font-display text-base font-bold text-white">{selectedNode.label}</h3>
-                <p className="font-mono text-xs text-accent-glow">{selectedNode.account_number || selectedNode.id}</p>
+                <h3 className="mt-1 font-mono text-sm font-semibold text-white">{selectedNode.label}</h3>
+                <p className="font-mono text-xs text-indigo-400">{selectedNode.account_number || selectedNode.id}</p>
               </div>
-              <button onClick={() => setSelectedNode(null)} className="rounded-lg p-1 text-slate-400 hover:bg-navy-800 hover:text-white">
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Risk Gauge */}
-            <div className="my-4 glass-card-sm p-3.5">
-              <div className="flex items-center justify-between mb-1.5 text-xs">
-                <span className="font-semibold text-slate-400">Forensic Risk Score</span>
-                <span className="font-bold text-red-400">{selectedNode.risk_score}/100</span>
+            <div className="my-3 rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3">
+              <div className="flex items-center justify-between mb-1 text-xs">
+                <span className="font-mono text-[11px] uppercase text-slate-400">Forensic Risk Score</span>
+                <span className="font-mono text-xs font-bold text-red-400">{selectedNode.risk_score}/100</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-navy-950 overflow-hidden">
+              <div className="h-1.5 w-full rounded-[2px] bg-navy-800 border border-navy-700/50 overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all"
+                  className="h-full transition-all duration-300"
                   style={{
                     width: `${selectedNode.risk_score}%`,
                     backgroundColor: selectedNode.risk_score >= 90 ? "#ef4444" : selectedNode.risk_score >= 75 ? "#f97316" : "#f59e0b",
@@ -680,48 +694,48 @@ export default function GraphPage() {
             </div>
 
             {/* Node Metadata List */}
-            <div className="space-y-2.5 text-xs">
+            <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3 space-y-2 text-xs">
               {selectedNode.customer_name && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Customer Name</span><span className="font-medium text-white">{selectedNode.customer_name}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Customer</span><span className="font-medium text-white">{selectedNode.customer_name}</span></div>
               )}
               {selectedNode.bank && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Bank Institution</span><span className="font-medium text-white">{selectedNode.bank}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Bank</span><span className="font-medium text-white">{selectedNode.bank}</span></div>
               )}
               {selectedNode.phone && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Phone Number</span><span className="font-mono text-emerald-400">{selectedNode.phone}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Phone</span><span className="font-mono text-emerald-400">{selectedNode.phone}</span></div>
               )}
               {selectedNode.device && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Fingerprint Device</span><span className="font-medium text-purple-400">{selectedNode.device}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Device</span><span className="font-mono text-purple-300 truncate max-w-[180px]">{selectedNode.device}</span></div>
               )}
               {selectedNode.ip && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Connected IP</span><span className="font-mono text-amber-400">{selectedNode.ip}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">IP Address</span><span className="font-mono text-amber-400">{selectedNode.ip}</span></div>
               )}
               {selectedNode.total_received && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Total Received</span><span className="font-bold text-emerald-400">{formatCurrency(selectedNode.total_received)}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Inbound</span><span className="font-mono font-bold text-emerald-400">{formatCurrency(selectedNode.total_received)}</span></div>
               )}
               {selectedNode.total_sent && (
-                <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Total Outbound</span><span className="font-bold text-red-400">{formatCurrency(selectedNode.total_sent)}</span></div>
+                <div className="flex justify-between py-0.5 border-b border-navy-800/80"><span className="text-slate-500 font-mono text-[11px] uppercase">Outbound</span><span className="font-mono font-bold text-red-400">{formatCurrency(selectedNode.total_sent)}</span></div>
               )}
-              <div className="flex justify-between py-1 border-b border-navy-800"><span className="text-slate-400">Community Cluster</span><span className="badge bg-accent/15 text-accent-glow font-mono">{selectedNode.community_id || "COMMUNITY-A12"}</span></div>
+              <div className="flex justify-between py-0.5"><span className="text-slate-500 font-mono text-[11px] uppercase">Cluster</span><span className="badge bg-indigo-500/10 text-indigo-400 border-indigo-500/20 font-mono text-[10px]">{selectedNode.community_id || "COMMUNITY-A12"}</span></div>
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-5 space-y-2">
+            <div className="mt-4 space-y-2">
               <button
                 onClick={handleGenerateAiSummary}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-bold text-white shadow-glow hover:bg-accent/90 transition-all"
+                className="w-full flex items-center justify-center gap-2 rounded-[3px] bg-indigo-600 px-3 py-2 text-xs font-mono font-medium text-white hover:bg-indigo-500 transition-colors"
               >
-                <Sparkles className="h-4 w-4" />
-                Generate AI Investigation Summary
+                <Sparkles className="h-3.5 w-3.5" />
+                Generate AI Intelligence Brief
               </button>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => togglePinNode(selectedNode.id)}
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-navy-600 bg-navy-950 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-navy-800"
+                  className="flex items-center justify-center gap-1.5 rounded-[3px] border border-navy-700 bg-navy-900 py-1.5 text-xs font-mono text-slate-300 hover:text-white hover:bg-navy-800 transition-colors"
                 >
-                  <Lock className="h-3.5 w-3.5" />
-                  {pinnedNodes.has(selectedNode.id) ? "Unpin Node" : "Pin Position"}
+                  <Lock className="h-3 w-3" />
+                  {pinnedNodes.has(selectedNode.id) ? "Unpin Node" : "Pin Node"}
                 </button>
 
                 <button
@@ -732,9 +746,9 @@ export default function GraphPage() {
                       (cyRef.current as any)?.zoom(2.5);
                     }
                   }}
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-navy-600 bg-navy-950 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-navy-800"
+                  className="flex items-center justify-center gap-1.5 rounded-[3px] border border-navy-700 bg-navy-900 py-1.5 text-xs font-mono text-slate-300 hover:text-white hover:bg-navy-800 transition-colors"
                 >
-                  <ZoomIn className="h-3.5 w-3.5" />
+                  <ZoomIn className="h-3 w-3" />
                   Focus
                 </button>
               </div>
@@ -749,16 +763,16 @@ export default function GraphPage() {
       {contextMenu && (
         <div
           style={{ left: contextMenu.x, top: contextMenu.y }}
-          className="fixed z-50 w-52 rounded-xl border border-white/10 bg-navy-900/95 py-2 shadow-2xl backdrop-blur-xl animate-fade-in text-xs"
+          className="fixed z-50 w-52 rounded-[4px] border border-navy-700 bg-navy-900/95 py-1 shadow-2xl font-mono text-xs"
         >
           <button
             onClick={() => {
               setSelectedNode(contextMenu.node);
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-slate-300 hover:bg-accent/20 hover:text-white"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-slate-300 hover:bg-navy-800 hover:text-white"
           >
-            <Zap className="h-3.5 w-3.5 text-accent" />
+            <Zap className="h-3.5 w-3.5 text-indigo-400" />
             Focus Node
           </button>
           <button
@@ -766,7 +780,7 @@ export default function GraphPage() {
               setHopLevel(hopLevel + 1);
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-slate-300 hover:bg-accent/20 hover:text-white"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-slate-300 hover:bg-navy-800 hover:text-white"
           >
             <ChevronRight className="h-3.5 w-3.5 text-emerald-400" />
             Expand Neighbors (+1 Hop)
@@ -776,7 +790,7 @@ export default function GraphPage() {
               togglePinNode(contextMenu.node.id);
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-slate-300 hover:bg-accent/20 hover:text-white"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-slate-300 hover:bg-navy-800 hover:text-white"
           >
             <Lock className="h-3.5 w-3.5 text-amber-400" />
             Pin Node Position
@@ -786,7 +800,7 @@ export default function GraphPage() {
               navigator.clipboard.writeText(contextMenu.node.account_number || contextMenu.node.id);
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-slate-300 hover:bg-accent/20 hover:text-white"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-slate-300 hover:bg-navy-800 hover:text-white"
           >
             <Copy className="h-3.5 w-3.5 text-slate-400" />
             Copy Entity ID
@@ -796,10 +810,10 @@ export default function GraphPage() {
               handleGenerateAiSummary();
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-slate-300 hover:bg-accent/20 hover:text-white"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-slate-300 hover:bg-navy-800 hover:text-white"
           >
-            <Sparkles className="h-3.5 w-3.5 text-pink-400" />
-            Generate AI Summary
+            <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+            Generate AI Brief
           </button>
         </div>
       )}
@@ -809,34 +823,37 @@ export default function GraphPage() {
       {/* ------------------------------------------------------------------- */}
       {showAiModal && (
         <>
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md" onClick={() => setShowAiModal(false)} />
-          <div className="fixed left-1/2 top-1/2 z-50 w-[540px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-navy-900 p-6 shadow-2xl animate-slide-up">
-            <div className="flex items-center justify-between mb-4">
+          <div className="fixed inset-0 z-50 bg-black/70" onClick={() => setShowAiModal(false)} />
+          <div className="fixed left-1/2 top-1/2 z-50 w-[540px] -translate-x-1/2 -translate-y-1/2 rounded-[4px] border border-navy-700 bg-navy-900/95 p-5 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between mb-3 border-b border-navy-700/80 pb-2.5">
               <div className="flex items-center gap-2">
-                <Brain className="h-5 w-5 text-accent-glow" />
-                <h3 className="font-display text-base font-bold text-white">AI Forensic Intelligence Brief</h3>
+                <Brain className="h-4 w-4 text-indigo-400" />
+                <h3 className="font-mono text-xs uppercase tracking-wider font-semibold text-white">AI Forensic Intelligence Brief</h3>
               </div>
-              <button onClick={() => setShowAiModal(false)} className="rounded-lg p-1 text-slate-400 hover:bg-navy-800 text-white">
-                <X className="h-5 w-5" />
+              <button
+                onClick={() => setShowAiModal(false)}
+                className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {isGeneratingAi ? (
               <div className="py-8 text-center space-y-3">
-                <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                <p className="text-xs text-slate-400">Computing Louvain Communities & SHAP Fraud Attribution...</p>
+                <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                <p className="font-mono text-xs text-slate-400">Computing Louvain Communities & SHAP Attribution...</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                <pre className="whitespace-pre-wrap rounded-xl border border-navy-700 bg-navy-950 p-4 font-mono text-xs text-slate-300 leading-relaxed">
+              <div className="space-y-3">
+                <pre className="whitespace-pre-wrap rounded-[3px] border border-navy-700 bg-navy-950 p-3.5 font-mono text-xs text-slate-300 leading-relaxed max-h-[320px] overflow-y-auto">
                   {aiSummary}
                 </pre>
                 <div className="flex justify-end">
                   <button
                     onClick={() => setShowAiModal(false)}
-                    className="rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white shadow-glow hover:bg-accent/90"
+                    className="rounded-[3px] bg-indigo-600 px-3.5 py-1.5 font-mono text-xs font-medium text-white hover:bg-indigo-500 transition-colors"
                   >
-                    Done
+                    Close
                   </button>
                 </div>
               </div>
