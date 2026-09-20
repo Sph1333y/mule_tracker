@@ -91,7 +91,7 @@ function ComplaintDetailModal({
         return;
       }
 
-      const datasetContext = `\n\n[DEEP GRAPH ANALYSIS]\n- Searched UTR: ${complaint.transaction_id}\n- Result: ${traceRes.data.path_summary}`;
+      const datasetContext = `\n\n[DEEP GRAPH ANALYSIS]\n- Searched UTR: ${complaint.transaction_id}\n- Result: ${traceRes.data?.path_summary}`;
 
       await onGenerate({
         report_type: "CYBERCRIME_SUMMARY",

@@ -14,6 +14,8 @@ import type {
   AlertRead,
   AlertTriageUpdate,
   AnalyticsOverviewResponse,
+  GraphNode,
+  GraphEdge,
   GraphResponse,
   GeoIntelligenceResponse,
   ReportRead,
@@ -227,11 +229,11 @@ export async function fetchGraph(): Promise<BaseResponse<GraphResponse>> {
   }
 }
 
-export async function fetchGraphTrace(txRef: string): Promise<BaseResponse<{nodes: any[], edges: any[], path_summary: string}>> {
+export async function fetchGraphTrace(txRef: string): Promise<BaseResponse<{nodes: GraphNode[], edges: GraphEdge[], path_summary: string}>> {
   if (USE_MOCK) {
     return { success: true, message: "Mock", data: { nodes: [], edges: [], path_summary: "Graph trace could not be established." } };
   }
-  return apiFetch<BaseResponse<{nodes: any[], edges: any[], path_summary: string}>>(`/api/v1/graph/trace/${encodeURIComponent(txRef)}`);
+  return apiFetch<BaseResponse<{nodes: GraphNode[], edges: GraphEdge[], path_summary: string}>>(`/api/v1/graph/trace/${encodeURIComponent(txRef)}`);
 }
 
 // -----------------------------------------------------------------------------

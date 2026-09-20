@@ -539,66 +539,73 @@ The application is actively running on localhost (`http://localhost:8000` and `h
 
 ---
 
-## 31. SHIP IT — Planned AWS Architecture
+## 31. SHIP IT — Simplified AWS Prototype Architecture
 
 > [!WARNING]
-> **STATUS: PLANNED — NOT YET IMPLEMENTED**  
-> All components in this section represent the target cloud architecture for future SHIP IT milestones.  
+> **STATUS: PROPOSED DESIGN / PROTOTYPE PLAN — NOT YET IMPLEMENTED**  
+> Based on the comprehensive audit in [REPORT_AWS_PROTOTYPE_READINESS.md](file:///D:/Team_Cipher_Unit/REPORT_AWS_PROTOTYPE_READINESS.md), the complex serverless architecture (Lambda/RDS/Neptune/S3) has been streamlined into a rapid, cost-effective **2-Tier AWS Prototype Architecture** that preserves 100% of the working BUILD IT logic.  
 > **NO AWS INFRASTRUCTURE HAS BEEN CREATED, PROVISIONED, OR DEPLOYED.**
 
-### Target AWS Services Under Planning:
-- **Frontend Hosting**: AWS Amplify Hosting (Next.js 14 SSR & Global CDN).
-- **API Runtime**: AWS Lambda + Mangum ASGI Adapter + Amazon API Gateway (or Amazon ECS Fargate).
-- **Relational Storage**: Amazon RDS PostgreSQL (or Amazon Aurora Serverless v2).
-- **Graph Storage & Mining**: Amazon Neptune Serverless (openCypher property graph) & Neptune Analytics.
-- **Object Storage**: Amazon S3 (ML model binaries, PDF/JSON STR exports, compliance audit archives).
-- **Secrets Management**: AWS Secrets Manager (automated rotation of DB credentials and API keys).
-- **Observability**: Amazon CloudWatch (structured logs/metrics) & AWS X-Ray (distributed trace sampling).
-- **Optional Generative AI**: Amazon Bedrock (interactive investigator Q&A layer; core copilot remains deterministic).
+### Target AWS Services Under Prototype Planning:
+- **Frontend Hosting**: **AWS Amplify Hosting** (Next.js 14 App Router, Global Edge CDN, Automated Git deployments).
+- **Backend API & ML Runtime**: **Amazon EC2** (`t3.xlarge` / `c6i.xlarge` Ubuntu 22.04 LTS instance running FastAPI via systemd + Uvicorn on `0.0.0.0:8000`).
+- **Persistent Model & File Storage**: **Amazon EBS** (50 GB `gp3` persistent root/data volume attached to EC2 for Scikit-learn/XGBoost `.pkl` artifacts, SQLite cache, and generated forensic PDF/JSON reports).
+- **Identity & Security**: **AWS IAM** (EC2 Instance Profile for credential-free AWS CLI/SSM management) and **AWS Secrets Manager** (or secure EC2 `.env` file).
+- **Relational Storage**: **Supabase PostgreSQL** (**RETAINED AS-IS**; zero schema migration, connects via existing `asyncpg` pool with mandatory TLS).
+- **Graph Storage**: **Neo4j AuraDB** (**RETAINED AS-IS**; zero graph migration, connects via `neo4j+s://` with local NetworkX fallback).
+
+### Explicitly Deferred AWS Services (Out of Scope for Prototype):
+- **Amazon RDS / Aurora**: Deferred (Supabase PostgreSQL is already provisioned, tuned, and tested).
+- **Amazon Neptune**: Deferred (Neo4j AuraDB is already provisioned and operational).
+- **Amazon S3**: Deferred (Model weights total ~18.6 MB and load directly from local EBS in milliseconds).
+- **AWS Lambda + API Gateway**: Deferred (Eliminates cold starts, 250 MB zip limits, and Mangum adapter complexity).
+- **Amazon Bedrock**: Deferred (Copilot M12 is strictly deterministic with zero external LLM dependencies).
+- **Kinesis / Flink / SageMaker**: Deferred (Handled in-process by FastAPI and CPU Scikit-learn/PyTorch).
 
 ---
 
-## 32. BUILD IT → SHIP IT Adapter Model
+## 32. BUILD IT → SHIP IT Prototype Architecture Model
 
-The transition to AWS relies entirely on the Ports-and-Adapters pattern:
+The simplified prototype transition preserves the working runtime without rewriting any domain ports:
 
 ```
-[MuleTrace AI Core Intelligence: M5, M6, M7, M8, M9, M10, M11, M12]
-                                │
-                  depends on domain interface
-                                │
-                                ▼
-                   GraphRepository (Domain Port)
-                                ▲
-                                │
-        ┌───────────────────────┴───────────────────────┐
-        │                                               │
-   implemented by                                 implemented by
-        │                                               │
-NetworkXGraphRepository                       NeptuneGraphRepository
-  (BUILD IT: Local In-Memory)               (SHIP IT: Amazon Neptune)
+[Next.js 14 Frontend]
+       │
+       ▼ (HTTPS REST / Edge CDN)
+[AWS Amplify Hosting]
+       │
+       ▼ (Reverse Proxy / TLS ALB)
+[Amazon EC2 Instance] ──attached to──> [Amazon EBS Volume]
+  - Uvicorn (FastAPI :8000)              - Tabular RF Models (~18.6 MB)
+  - M1–M14 Full Pipeline                 - Local SQLite Cache
+  - In-Memory PyTorch GraphSAGE          - Exported Forensic STR Packages
+  - AWS IAM Instance Profile
+       │
+       ├───────────────────────────────────────────────┐
+       ▼ (TLS Outbound / Pooler:6543)                  ▼ (TLS Outbound / neo4j+s://)
+[Supabase PostgreSQL]                           [Neo4j AuraDB]
+(Retained Cloud Relational DB)                 (Retained Cloud Graph DB)
 ```
 
-By substituting adapters at the application composition root, the cloud infrastructure is replaced without changing a single line of business or detection logic.
+By retaining Supabase and Neo4j AuraDB, zero data migration is required, and the existing `asyncpg` and `neo4j` drivers connect seamlessly from EC2.
 
 ---
 
-## 33. AWS Service-by-Service Mapping
+## 33. AWS Service-by-Service Mapping (Prototype Target)
 
-| BUILD IT Component | Planned AWS Service | Adapter / Boundary | Data Flow Entering | Data Flow Leaving | Domain Interface | Business Logic Impact | Current Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :---: | :---: |
-| **Next.js Local Server (`:3000`)** | **AWS Amplify Hosting** | `amplify.yml` build spec | Browser clicks, search queries | HTML/JS bundles, API responses | HTTP REST Client | None | **PLANNED** |
-| **FastAPI Uvicorn (`:8000`)** | **AWS Lambda + API Gateway** (or **ECS Fargate**) | `mangum` handler or Dockerfile | HTTP requests, headers | JSON response schemas | Master FastAPI Router | None | **PLANNED** |
-| **Local PostgreSQL** | **Amazon RDS PostgreSQL** (or **Aurora Serverless v2**) | `DATABASE_URL` async connection | Transactions, accounts, alerts | SQL records, ORM objects | SQLAlchemy async session | None | **PLANNED** |
-| **NetworkX / Neo4j** | **Amazon Neptune Serverless** | `NeptuneGraphRepository` | Account IDs, edge paths, k-hop queries | Subgraph dictionaries, paths | `app.domain.interfaces.GraphRepository` | None | **PLANNED** |
-| **Local `.pkl` / `.pt` Models** | **Amazon S3** | `S3ModelArtifactLoader` | S3 URI, model version keys | Deserialized model weights | `app.domain.interfaces.ModelService` | None | **PLANNED** |
-| **Local `.env` File** | **AWS Secrets Manager** | `AWSSecretsManagerSettingsSource` | Secret ARN | Decrypted environment strings | `app.core.config.Settings` | None | **PLANNED** |
-| **Standard Python `logging`** | **Amazon CloudWatch + Lambda Powertools** | Structured JSON logging handler | Application logs, trace spans | CloudWatch Log Streams | Python Logger | None | **PLANNED** |
-| **Deterministic Copilot (M12)** | **Deterministic Copilot** + *Optional* **Amazon Bedrock** | `BedrockCopilot` implementing port | Evidence package, prompt context | Narrative response text | `app.domain.interfaces.InvestigationCopilot` | None | **PLANNED (OPTIONAL)** |
+| BUILD IT Component | Prototype AWS Service | Deployment Mechanism | Data Flow Entering | Data Flow Leaving | Codebase Compatibility | Code Changes Required? | Status |
+| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: |
+| **Next.js Local (`:3000`)** | **AWS Amplify Hosting** | `amplify.yml` Next.js SSR build | Investigator browser queries | HTML/JS edge bundles, API JSON | Blocked by 1 TS error | **YES** (Fix null check in `reports/page.tsx:94`) | **PLANNED** |
+| **FastAPI Backend (`:8000`)** | **Amazon EC2 (`t3.xlarge`)** | Ubuntu 22.04 LTS + Systemd + Uvicorn | REST requests from Amplify | JSON response schemas, forensic exports | 100% Native Python | **NO** | **PLANNED** |
+| **Model Pickles (`.pkl`)** | **Amazon EBS Volume** | Native filesystem (`gp3` block storage) | Local filesystem reads | Loaded model objects in RAM | 100% Native Pathlib | **NO** | **PLANNED** |
+| **PyTorch GraphSAGE (M9)** | **Amazon EC2 CPU** | In-process PyTorch tensor engine | Graph subgraphs / embeddings | Anomaly scores & embeddings | 100% CPU Compatible | **NO** | **PLANNED** |
+| **Supabase PostgreSQL** | **Supabase Cloud (Retained)** | Direct SSL connection (`postgres.py`) | Transactions, accounts, investigations | SQL rows, ORM models | 100% Native Asyncpg | **NO** | **OPERATIONAL** |
+| **Neo4j AuraDB** | **Neo4j AuraDB (Retained)** | Direct TLS connection (`neo4j+s://`) | Cypher queries, graph path traces | Subgraphs, cycle paths | 100% Native Bolt | **NO** | **OPERATIONAL** |
+| **Local `.env`** | **EC2 `.env` / Secrets Manager** | `pydantic-settings` environment injection | Injected environment variables | Parsed `Settings` object | 100% Compatible | **NO** | **PLANNED** |
 
 ---
 
-## 34. Current vs. Planned Data Flow
+## 34. Current vs. Planned Prototype Data Flow
 
 ### A. CURRENT BUILD IT Data Flow (Localhost Operational)
 ```
@@ -625,86 +632,78 @@ Transaction Sources (CSV / REST)
        Next.js SOC Dashboard (Localhost:3000)
 ```
 
-### B. PLANNED SHIP IT Data Flow (PLANNED — NOT IMPLEMENTED)
+### B. PLANNED PROTOTYPE SHIP IT Data Flow (PROPOSED — NOT IMPLEMENTED)
 ```
-User / Forensic Investigator (Browser)
+User / Forensic Investigator (Web Browser)
+             │
+             ▼ (HTTPS / Edge CDN)
+   [AWS Amplify Hosting] (Next.js 14 App Router)
+             │
+             ▼ (HTTPS Reverse Proxy / Port 443 -> 8000)
+    [Amazon EC2 Instance] (FastAPI Uvicorn Systemd Service)
              │
              ▼
-   [AWS Amplify Hosting] (Next.js 14 SSR / Static Edge)
+   M1–M14 Intelligence Pipeline (All 14 Milestones Preserved)
              │
-             ▼
-   [Amazon API Gateway] (HTTP API / WAF / JWT Authorizer)
-             │
-             ▼
-    [AWS Lambda / ECS Fargate] (FastAPI via Mangum / Container)
-             │
-             ▼
-      Domain Ports & Application Services (M1–M12 Preserved)
-             │
-    ┌────────┴────────┬────────────────┬────────────────┬──────────────┐
-    ▼                 ▼                ▼                ▼              ▼
-[Amazon RDS]  [Amazon Neptune]  [Amazon S3]   [AWS Secrets]   [CloudWatch]
- PostgreSQL     openCypher Graph  ML Artifacts   Manager Keys    Powertools
+    ┌────────┼────────────────┬────────────────┐
+    ▼        ▼                ▼                ▼
+[EBS gp3]  [PyTorch CPU]  [Supabase DB]   [Neo4j AuraDB]
+.pkl Models  GraphSAGE     PostgreSQL      Property Graph
+Reports     Tensors        (Port 6543)     (neo4j+s://)
 ```
 
 ---
 
-## 35. AWS Adapter Implementation Principle
+## 35. Prototype Implementation & Preservation Principles
 
-To preserve cloud independence, the future SHIP IT adapters must be selected at the **Composition Root (Dependency Injection)** rather than scattered throughout application logic:
+To preserve complete codebase stability, the prototype follows four strict engineering principles:
 
-- **STRICTLY PROHIBITED (Coupling Anti-Pattern)**:
-  ```python
-  # NEVER DO THIS IN DOMAIN OR SERVICE CODE:
-  if os.environ.get("AWS_EXECUTION_ENV"):
-      query_amazon_neptune()
-  else:
-      query_networkx()
-  ```
-- **MANDATED (Hexagonal Composition Root Pattern)**:
-  ```python
-  # Handled exclusively in app/repositories/graph_factory.py at startup:
-  def get_graph_repository() -> GraphRepository:
-      backend = settings.GRAPH_BACKEND.lower()
-      if backend == "neptune":
-          return NeptuneGraphRepository(endpoint=settings.NEPTUNE_ENDPOINT)
-      elif backend == "neo4j":
-          return Neo4jGraphRepository(...)
-      return NetworkXGraphRepository(...)
-  ```
+1. **Zero Domain Rewrites**: None of the M1–M14 detection engines, fusion math, evidence hashing, or copilot rules may be altered for cloud deployment.
+2. **Pure Environment Variable Configuration**: Cloud endpoints are configured strictly through `pydantic-settings` environment variables (`DATABASE_URL`, `NEO4J_URI`, `NEXT_PUBLIC_API_URL`).
+3. **No S3 / Lambda Overhead**: By keeping compute on EC2 and storage on EBS, the system avoids AWS Lambda packaging limits (700+ MB PyTorch/Scikit-learn dependencies) and S3 network latency.
+4. **Hexagonal Independence Preserved**: The domain interfaces (`GraphRepository`, `DatabaseSession`) remain completely agnostic of whether compute runs on a developer laptop or an AWS EC2 instance.
 
 ---
 
-## 36. Future SHIP IT Roadmap
+## 36. Streamlined SHIP IT Prototype Roadmap
 
 > [!NOTE]
-> This roadmap outlines the planned migration sequence. **None of these milestones have been implemented.**
+> This roadmap outlines the streamlined prototype deployment sequence. **None of these milestones have been implemented yet.**
 
-- **Phase S0**: Architectural Decision Record (Lambda vs. ECS Fargate, Aurora vs. RDS).
-- **Phase S1**: AWS Account baseline, IAM least-privilege service roles.
-- **Phase S2**: AWS CDK Infrastructure-as-Code repository initialization.
-- **Phase S3**: Core VPC, subnets, and security group provisioning.
-- **Phase S4**: Amazon RDS / Aurora PostgreSQL provisioning and Alembic schema migration.
-- **Phase S5**: Amazon Neptune Serverless provisioning and `NeptuneGraphRepository` adapter implementation.
-- **Phase S6**: Amazon S3 bucket creation and ML artifact migration.
-- **Phase S7**: Multi-stage Docker packaging for FastAPI.
-- **Phase S8**: AWS Lambda / ECS Fargate backend deployment and API Gateway routing.
-- **Phase S9**: AWS Amplify Hosting deployment for the Next.js frontend.
-- **Phase S10**: AWS Secrets Manager integration for database credentials.
-- **Phase S11**: Amazon CloudWatch alarms and AWS X-Ray tracing.
-- **Phase S12**: Cloud integration and parity test execution.
-- **Phase S13**: Production hardening and security sign-off.
+- **Phase P0 — Codebase Build Readiness**:
+  - Fix TypeScript compilation error in `frontend/src/app/reports/page.tsx:94` (`traceRes.data?.path_summary`).
+  - Verify `npm run build` exits 0 locally.
+- **Phase P1 — EC2 Compute & Security Provisioning**:
+  - Launch Ubuntu 22.04 LTS `t3.xlarge` with 50 GB gp3 EBS in default AWS VPC.
+  - Attach IAM Instance Profile with minimal SSM and Secrets Manager permissions.
+  - Configure security group (Inbound: 22 SSH, 80 HTTP, 443 HTTPS, 8000 API).
+- **Phase P2 — Backend Runtime Setup**:
+  - Install Python 3.11, git, and virtual environment.
+  - Clone repository and install `backend/requirements.txt`.
+  - Configure production `.env` pointing to active Supabase and Neo4j AuraDB instances.
+  - Create and enable systemd service (`muletrace.service`).
+- **Phase P3 — Reverse Proxy & SSL Termination**:
+  - Configure Nginx or Caddy reverse proxy to terminate HTTPS on port 443 and forward to `127.0.0.1:8000`.
+  - Acquire Let's Encrypt TLS certificate to avoid browser mixed-content restrictions.
+- **Phase P4 — AWS Amplify Frontend Deployment**:
+  - Connect GitHub repository to AWS Amplify Console.
+  - Set `NEXT_PUBLIC_API_URL=https://api.yourdomain.com` (or EC2 HTTPS endpoint).
+  - Deploy Next.js frontend with continuous deployment from `main`.
+- **Phase P5 — End-to-End Cloud Verification**:
+  - Run M14 end-to-end smoke tests against cloud endpoints.
+  - Verify SOC investigation workflow, graph rendering, and evidence export through browser.
 
 ---
 
-## 37. Open Architectural Decisions
+## 37. Open Architectural Decisions (Prototype Scope)
 
-The following items are genuinely open decisions to be finalized before starting SHIP IT:
-1. **Lambda vs. ECS Fargate**: Weighing serverless cold starts and package size limits (PyTorch/scikit-learn) against Fargate's persistent compute.
-2. **Amazon RDS vs. Aurora Serverless v2**: Evaluating scaling dynamics vs. predictable pricing for hackathon demonstrations.
-3. **Amazon Neptune vs. Neptune Analytics**: Neptune manages persistent transaction graph storage; Neptune Analytics accelerates batch graph mining algorithms (PageRank, Louvain).
-4. **Bedrock Role**: Deciding whether Bedrock should be added as an optional conversational assistant or omitted entirely to preserve zero-cost determinism.
-5. **VPC Endpoint Architecture**: Configuring private endpoints for S3 and Secrets Manager to avoid NAT Gateway data transfer charges.
+The following items are open decisions for the prototype implementation phase:
+1. **EC2 Instance Sizing**: Selecting between `t3.xlarge` (4 vCPU, 16 GB RAM burstable — cost-effective for demo) vs. `c6i.xlarge` (4 vCPU, 8 GB compute-optimized — consistent CPU for PyTorch GraphSAGE).
+2. **HTTPS Termination Method**:
+   - Option A: Elastic IP + Domain name + Free Let's Encrypt SSL via Nginx directly on EC2.
+   - Option B: AWS Application Load Balancer (ALB) with free AWS Certificate Manager (ACM) SSL.
+   - Option C: Next.js SSR API Rewrite Proxy in `frontend/next.config.mjs` (eliminates need for EC2 domain/SSL).
+3. **Secrets Management Strategy**: Storing secrets in `/opt/muletrace/backend/.env` with strict `chmod 600` permissions vs. fetching at systemd boot from AWS Secrets Manager via AWS CLI.
 
 ---
 
