@@ -59,7 +59,7 @@ body {
     @apply glass-card transition-colors duration-150;
   }
   .glass-card-hover:hover {
-    @apply border-navy-600 bg-navy-850;
+    @apply border-navy-600 bg-navy-800/80;
   }
 
   .glass-card-sm {
