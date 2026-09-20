@@ -20,36 +20,39 @@ function TransactionInspector({
     <>
       <div className="slide-over-backdrop" onClick={onClose} />
       <div className="slide-over-panel overflow-y-auto">
-        <div className="border-b border-navy-600 p-5">
+        <div className="border-b border-navy-700/80 bg-navy-900/90 p-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-lg font-bold text-white">Transaction Details</h3>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-navy-700 hover:text-white">
-              <X className="h-5 w-5" />
+            <h3 className="font-mono text-xs uppercase tracking-wider font-semibold text-white">Transaction Telemetry</h3>
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
-          <p className="mt-1 font-mono text-xs text-accent-glow">{tx.transaction_ref}</p>
+          <p className="mt-1 font-mono text-xs text-indigo-400">{tx.transaction_ref}</p>
         </div>
 
-        <div className="space-y-5 p-5">
+        <div className="space-y-4 p-4">
           {/* Amount & Channel */}
-          <div className="glass-card-sm p-4">
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">Amount</p>
-                <p className="font-display text-2xl font-bold text-white">{formatCurrency(tx.amount)}</p>
+                <p className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Transaction Amount</p>
+                <p className="font-mono text-xl font-bold text-white mt-0.5">{formatCurrency(tx.amount)}</p>
               </div>
-              <span className={cn("badge text-sm", getChannelColor(tx.channel))}>{tx.channel}</span>
+              <span className={cn("badge font-mono text-xs", getChannelColor(tx.channel))}>{tx.channel}</span>
             </div>
           </div>
 
           {/* Risk Assessment */}
-          <div className="glass-card-sm p-4">
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Risk Assessment</h4>
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5">
+            <h4 className="mb-2 text-[10px] font-mono uppercase tracking-wider text-slate-400">Risk Assessment</h4>
             <div className="flex items-center gap-3">
               <div className="flex-1">
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-navy-700">
+                <div className="h-2 w-full overflow-hidden rounded-[2px] bg-navy-800 border border-navy-700/50">
                   <div
-                    className="h-full rounded-full transition-all"
+                    className="h-full transition-all duration-300"
                     style={{
                       width: `${tx.risk_score}%`,
                       backgroundColor: tx.risk_score >= 80 ? "#ef4444" : tx.risk_score >= 60 ? "#f59e0b" : tx.risk_score >= 40 ? "#3b82f6" : "#10b981",
@@ -57,10 +60,10 @@ function TransactionInspector({
                   />
                 </div>
               </div>
-              <span className="text-lg font-bold text-white">{tx.risk_score}</span>
+              <span className="font-mono text-sm font-bold text-white">{tx.risk_score} / 100</span>
             </div>
             {tx.flagged_pattern && (
-              <div className="mt-3">
+              <div className="mt-2.5">
                 <span className={cn("badge", getRiskBg("HIGH"))}>
                   {tx.flagged_pattern.replace(/_/g, " ")}
                 </span>
@@ -69,53 +72,53 @@ function TransactionInspector({
           </div>
 
           {/* Accounts */}
-          <div className="glass-card-sm p-4">
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Accounts</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Sender</span>
-                <span className="font-mono text-xs text-white">{tx.sender_account_id.slice(0, 8)}…</span>
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5">
+            <h4 className="mb-2.5 text-[10px] font-mono uppercase tracking-wider text-slate-400">Entities</h4>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 font-mono text-[11px] uppercase">Origin</span>
+                <span className="font-mono text-xs text-slate-200">{tx.sender_account_id}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Receiver</span>
-                <span className="font-mono text-xs text-white">{tx.receiver_account_id.slice(0, 8)}…</span>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 font-mono text-[11px] uppercase">Destination</span>
+                <span className="font-mono text-xs text-slate-200">{tx.receiver_account_id}</span>
               </div>
             </div>
           </div>
 
           {/* Device & Network */}
-          <div className="glass-card-sm p-4">
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Device & Network Intelligence</h4>
-            <div className="space-y-3 text-sm">
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5">
+            <h4 className="mb-2.5 text-[10px] font-mono uppercase tracking-wider text-slate-400">Device & Telemetry</h4>
+            <div className="space-y-2.5 text-xs">
               {tx.device_fingerprint && (
                 <div className="flex items-center gap-2">
-                  <Smartphone className="h-4 w-4 text-slate-500" />
-                  <span className="text-slate-400">Device:</span>
-                  <span className="font-mono text-xs text-white">{tx.device_fingerprint}</span>
+                  <Smartphone className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                  <span className="text-slate-400 font-mono text-[11px] uppercase">Device:</span>
+                  <span className="font-mono text-xs text-slate-300 truncate">{tx.device_fingerprint}</span>
                 </div>
               )}
               {tx.ip_address_str && (
                 <div className="flex items-center gap-2">
-                  <Wifi className="h-4 w-4 text-slate-500" />
-                  <span className="text-slate-400">IP:</span>
-                  <span className="font-mono text-xs text-white">{tx.ip_address_str}</span>
+                  <Wifi className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                  <span className="text-slate-400 font-mono text-[11px] uppercase">IP:</span>
+                  <span className="font-mono text-xs text-slate-300">{tx.ip_address_str}</span>
                 </div>
               )}
               {tx.location_city && (
                 <div className="flex items-center gap-2">
-                  <MapPinIcon className="h-4 w-4 text-slate-500" />
-                  <span className="text-slate-400">Location:</span>
-                  <span className="text-white">{tx.location_city}, {tx.location_state}</span>
+                  <MapPinIcon className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+                  <span className="text-slate-400 font-mono text-[11px] uppercase">Location:</span>
+                  <span className="text-xs text-slate-200">{tx.location_city}, {tx.location_state}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Timestamp */}
-          <div className="glass-card-sm p-4">
-            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Timeline</h4>
-            <p className="text-sm text-white">{formatDateTime(tx.timestamp)}</p>
-            <p className="mt-1 text-xs text-slate-500">Status: {tx.status}</p>
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-3.5">
+            <h4 className="mb-1 text-[10px] font-mono uppercase tracking-wider text-slate-400">Execution Timeline</h4>
+            <p className="font-mono text-xs text-slate-200">{formatDateTime(tx.timestamp)}</p>
+            <p className="mt-1 font-mono text-[11px] text-slate-500 uppercase">Status: {tx.status}</p>
           </div>
         </div>
       </div>
@@ -143,46 +146,49 @@ export default function TransactionsPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="page-header flex justify-between items-start">
-        <p className="page-subtitle">Search, filter, and inspect cross-channel transactions with risk intelligence</p>
-        <div className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold border",
-          isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-slate-500/10 text-slate-400 border-slate-500/20"
-        )}>
-          <span className="relative flex h-1.5 w-1.5">
-            {isLive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
-            <span className={cn("relative inline-flex rounded-full h-1.5 w-1.5", isLive ? "bg-emerald-500" : "bg-slate-500")}></span>
-          </span>
-          {isLive ? "LIVE" : "OFFLINE / MOCK"}
+      {/* Page Header */}
+      <div className="flex justify-between items-start border-b border-navy-700/60 pb-4">
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-white">Transaction Intelligence Ledger</h1>
+          <p className="mt-0.5 text-xs text-slate-400">Search, filter, and inspect cross-channel transactions with forensic risk telemetry</p>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <div className={cn(
+            "flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[10px] font-mono border",
+            isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-slate-800/80 text-slate-400 border-slate-700"
+          )}>
+            <span className={cn("h-1.5 w-1.5 rounded-full", isLive ? "bg-emerald-400" : "bg-slate-400")} />
+            {isLive ? "STREAMING" : "OFFLINE / MOCK"}
+          </div>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="glass-card flex flex-wrap items-center gap-3 p-4">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+      <div className="glass-card flex flex-wrap items-center justify-between gap-3 p-3">
+        <div className="relative flex-1 min-w-[240px] max-w-md">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
-            placeholder="Search by UTR / Reference..."
+            placeholder="Search by UTR / Reference ID..."
             value={searchRef}
             onChange={(e) => setSearchRef(e.target.value)}
-            className="w-full rounded-lg border border-navy-600 bg-navy-800 py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            className="w-full rounded-[4px] border border-navy-700 bg-navy-950/80 py-1.5 pl-8 pr-3 text-xs font-mono text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-500" />
+        <div className="flex items-center gap-1.5">
+          <Filter className="h-3.5 w-3.5 text-slate-500 mr-1" />
           {["", "UPI", "NEFT", "IMPS", "RTGS"].map((ch) => (
             <button
               key={ch}
               onClick={() => setChannelFilter(ch)}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+                "rounded-[3px] px-2.5 py-1 text-[11px] font-mono font-medium transition-colors",
                 channelFilter === ch
-                  ? "bg-accent/20 text-accent-glow border border-accent/30"
-                  : "border border-navy-600 bg-navy-800 text-slate-400 hover:text-white hover:bg-navy-700"
+                  ? "bg-indigo-600 text-white border border-indigo-500"
+                  : "border border-navy-700 bg-navy-800/60 text-slate-400 hover:text-slate-200 hover:bg-navy-800"
               )}
             >
-              {ch || "All"}
+              {ch || "ALL"}
             </button>
           ))}
         </div>
@@ -191,9 +197,9 @@ export default function TransactionsPage() {
       {/* Table */}
       <div className="glass-card overflow-hidden">
         {loading ? (
-          <div className="space-y-3 p-5">
+          <div className="space-y-2 p-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="skeleton h-10 rounded-lg" />
+              <div key={i} className="skeleton h-9 rounded" />
             ))}
           </div>
         ) : (
@@ -201,30 +207,30 @@ export default function TransactionsPage() {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>UTR / Reference</th>
-                  <th>Channel</th>
-                  <th>Amount (₹)</th>
-                  <th>Location</th>
-                  <th>Risk Score</th>
-                  <th>Pattern</th>
-                  <th>Time</th>
-                  <th></th>
+                  <th>UTR / REFERENCE</th>
+                  <th>CHANNEL</th>
+                  <th>AMOUNT (INR)</th>
+                  <th>LOCATION</th>
+                  <th>RISK SCORE</th>
+                  <th>PATTERN</th>
+                  <th>TIMESTAMP</th>
+                  <th className="text-right">INSPECT</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((tx) => (
                   <tr key={tx.id} className="cursor-pointer" onClick={() => setSelectedTx(tx)}>
-                    <td className="font-mono text-xs text-accent-glow">{tx.transaction_ref}</td>
+                    <td className="font-mono text-xs font-medium text-indigo-400">{tx.transaction_ref}</td>
                     <td>
-                      <span className={cn("badge", getChannelColor(tx.channel))}>{tx.channel}</span>
+                      <span className={cn("badge font-mono text-[10px]", getChannelColor(tx.channel))}>{tx.channel}</span>
                     </td>
-                    <td className="font-medium text-white">{formatCurrency(tx.amount)}</td>
-                    <td className="text-xs">{tx.location_city || "—"}</td>
+                    <td className="font-mono text-xs font-semibold text-slate-100">{formatCurrency(tx.amount)}</td>
+                    <td className="text-xs text-slate-300">{tx.location_city || "—"}</td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-navy-700">
+                        <div className="h-1.5 w-16 overflow-hidden rounded-[2px] bg-navy-800 border border-navy-700/50">
                           <div
-                            className="h-full rounded-full"
+                            className="h-full transition-all duration-300"
                             style={{
                               width: `${tx.risk_score}%`,
                               backgroundColor:
@@ -232,7 +238,7 @@ export default function TransactionsPage() {
                             }}
                           />
                         </div>
-                        <span className="text-xs font-medium text-slate-300">{tx.risk_score}</span>
+                        <span className="font-mono text-[11px] font-medium text-slate-300">{tx.risk_score}</span>
                       </div>
                     </td>
                     <td>
@@ -241,12 +247,19 @@ export default function TransactionsPage() {
                           {tx.flagged_pattern.replace(/_/g, " ")}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-600">—</span>
+                        <span className="text-xs text-slate-600 font-mono">—</span>
                       )}
                     </td>
-                    <td className="text-xs text-slate-500">{formatDateTime(tx.timestamp)}</td>
-                    <td>
-                      <button className="rounded p-1 text-slate-500 hover:bg-navy-700 hover:text-white">
+                    <td className="font-mono text-[11px] text-slate-400">{formatDateTime(tx.timestamp)}</td>
+                    <td className="text-right">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTx(tx);
+                        }}
+                        className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+                        title="Inspect Transaction"
+                      >
                         <Eye className="h-3.5 w-3.5" />
                       </button>
                     </td>
@@ -259,16 +272,22 @@ export default function TransactionsPage() {
 
         {/* Pagination */}
         {pagination && (
-          <div className="flex items-center justify-between border-t border-navy-700/50 px-4 py-3">
-            <p className="text-xs text-slate-500">
-              Showing {filtered.length} of {pagination.total_items} transactions
+          <div className="flex items-center justify-between border-t border-navy-700/60 px-4 py-2.5 bg-navy-900/40">
+            <p className="font-mono text-[11px] text-slate-400">
+              SHOWING {filtered.length} OF {pagination.total_items} RECORDS
             </p>
-            <div className="flex gap-2">
-              <button disabled={!pagination.has_prev} className="rounded-lg border border-navy-600 bg-navy-800 px-3 py-1 text-xs text-slate-400 disabled:opacity-30">
-                Previous
+            <div className="flex gap-1.5">
+              <button
+                disabled={!pagination.has_prev}
+                className="rounded-[3px] border border-navy-700 bg-navy-800/80 px-2.5 py-1 font-mono text-[11px] text-slate-300 disabled:opacity-40 hover:bg-navy-700 hover:text-white transition-colors"
+              >
+                PREVIOUS
               </button>
-              <button disabled={!pagination.has_next} className="rounded-lg border border-navy-600 bg-navy-800 px-3 py-1 text-xs text-slate-400 disabled:opacity-30">
-                Next
+              <button
+                disabled={!pagination.has_next}
+                className="rounded-[3px] border border-navy-700 bg-navy-800/80 px-2.5 py-1 font-mono text-[11px] text-slate-300 disabled:opacity-40 hover:bg-navy-700 hover:text-white transition-colors"
+              >
+                NEXT
               </button>
             </div>
           </div>
