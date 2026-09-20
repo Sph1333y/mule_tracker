@@ -27,16 +27,18 @@ import { useDashboard } from "@/hooks/useDashboard";
 import type { AlertRead } from "@/lib/types";
 import { formatCurrencyCompact, formatNumber, getRiskBg, formatTimeAgo, cn } from "@/lib/utils";
 
+import Link from "next/link";
+
 // -----------------------------------------------------------------------------
 // Custom Recharts Tooltip
 // -----------------------------------------------------------------------------
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ name: string; value: number; color: string }>; label?: string }) {
   if (!active || !payload) return null;
   return (
-    <div className="glass-card-sm px-3 py-2">
-      <p className="text-xs font-medium text-white">{label}</p>
+    <div className="rounded-[4px] border border-navy-700 bg-navy-900/95 px-3 py-2 shadow-lg">
+      <p className="text-xs font-mono font-medium text-slate-300 mb-1">{label}</p>
       {payload.map((p, i) => (
-        <p key={i} className="text-xs" style={{ color: p.color }}>
+        <p key={i} className="text-xs font-mono" style={{ color: p.color }}>
           {p.name}: {p.value}
         </p>
       ))}
@@ -71,36 +73,36 @@ function KPICard({
           ? "kpi-card-blue"
           : "kpi-card-emerald";
 
-  const iconColor =
+  const iconStyle =
     variant === "critical"
-      ? "text-red-400 bg-red-500/15"
+      ? "text-red-400 bg-red-500/10 border-red-500/20"
       : variant === "amber"
-        ? "text-amber-400 bg-amber-500/15"
+        ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
         : variant === "blue"
-          ? "text-blue-400 bg-blue-500/15"
-          : "text-emerald-400 bg-emerald-500/15";
+          ? "text-blue-400 bg-blue-500/10 border-blue-500/20"
+          : "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
 
   return (
-    <div className={cardClass}>
-      <div className="flex items-start justify-between">
-        <div className={cn("flex h-10 w-10 items-center justify-center rounded-lg", iconColor)}>
-          <Icon className="h-5 w-5" />
+    <div className={cn(cardClass, "p-4")}>
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">{label}</span>
+        <div className={cn("flex h-7 w-7 items-center justify-center rounded-[4px] border", iconStyle)}>
+          <Icon className="h-3.5 w-3.5" />
         </div>
+      </div>
+      <div className="mt-3 flex items-baseline justify-between">
+        <p className="font-mono text-2xl font-semibold tracking-tight text-white">{value}</p>
         {trend && (
           <div
             className={cn(
-              "flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
-              trend === "up" ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"
+              "flex items-center gap-1 text-[11px] font-mono",
+              trend === "up" ? "text-red-400" : "text-emerald-400"
             )}
           >
             {trend === "up" ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
             {trendLabel}
           </div>
         )}
-      </div>
-      <div className="mt-3">
-        <p className="font-display text-2xl font-bold text-white">{value}</p>
-        <p className="mt-0.5 text-xs text-slate-400">{label}</p>
       </div>
     </div>
   );
@@ -113,10 +115,10 @@ function RiskScoreBar({ score }: { score: number }) {
   const color = score >= 80 ? "#ef4444" : score >= 60 ? "#f59e0b" : score >= 40 ? "#3b82f6" : "#10b981";
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-navy-700">
-        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${score}%`, backgroundColor: color }} />
+      <div className="h-1.5 w-16 overflow-hidden rounded-[2px] bg-navy-800 border border-navy-700/50">
+        <div className="h-full transition-all duration-300" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
-      <span className="text-xs font-medium" style={{ color }}>
+      <span className="font-mono text-[11px] font-medium" style={{ color }}>
         {score}
       </span>
     </div>
@@ -134,14 +136,14 @@ export default function DashboardPage() {
       <div className="space-y-6 animate-fade-in">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="skeleton h-[120px] rounded-xl" />
+            <div key={i} className="skeleton h-[104px] rounded" />
           ))}
         </div>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="skeleton h-[350px] rounded-xl" />
-          <div className="skeleton h-[350px] rounded-xl" />
+          <div className="skeleton h-[320px] rounded" />
+          <div className="skeleton h-[320px] rounded" />
         </div>
-        <div className="skeleton h-[400px] rounded-xl" />
+        <div className="skeleton h-[380px] rounded" />
       </div>
     );
   }
@@ -163,32 +165,30 @@ export default function DashboardPage() {
   }));
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Page Header */}
-      <div className="page-header flex justify-between items-start">
+      <div className="flex justify-between items-start border-b border-navy-700/60 pb-4">
         <div>
-          <p className="page-subtitle">Real-time overview of mule account detection, risk intelligence, and active investigations</p>
+          <h1 className="text-lg font-semibold tracking-tight text-white">Executive SOC Overview</h1>
+          <p className="mt-0.5 text-xs text-slate-400">Real-time surveillance of mule accounts, syndicates, and forensic risk indicators</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <div className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold border",
-            isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-slate-500/10 text-slate-400 border-slate-500/20"
+            "flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[10px] font-mono border",
+            isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-slate-800/80 text-slate-400 border-slate-700"
           )}>
-            <span className="relative flex h-1.5 w-1.5">
-              {isLive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
-              <span className={cn("relative inline-flex rounded-full h-1.5 w-1.5", isLive ? "bg-emerald-500" : "bg-slate-500")}></span>
-            </span>
-            {isLive ? "LIVE" : "OFFLINE / MOCK"}
+            <span className={cn("h-1.5 w-1.5 rounded-full", isLive ? "bg-emerald-400" : "bg-slate-400")} />
+            {isLive ? "LIVE INGESTION" : "OFFLINE / MOCK"}
           </div>
-          {lastUpdated && <p className="text-[10px] text-slate-500">Last updated: {lastUpdated.toLocaleTimeString()}</p>}
+          {lastUpdated && <p className="text-[10px] font-mono text-slate-500">SYNC: {lastUpdated.toLocaleTimeString()}</p>}
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 animate-stagger">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           icon={ArrowLeftRight}
-          label="Total Transactions (24h)"
+          label="Transactions (24h)"
           value={formatNumber(kpis.total_transactions_24h)}
           trend="up"
           trendLabel="+12.4%"
@@ -221,19 +221,22 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Risk Distribution Donut */}
-        <div className="glass-card p-5">
-          <h3 className="mb-4 text-sm font-semibold text-white">Account Risk Distribution</h3>
+        <div className="glass-card p-4">
+          <div className="mb-4 flex items-center justify-between border-b border-navy-700/60 pb-3">
+            <h3 className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-200">Account Risk Distribution</h3>
+            <span className="text-[10px] font-mono text-slate-400">4 RISK TIERS</span>
+          </div>
           <div className="flex items-center gap-6">
-            <ResponsiveContainer width="50%" height={220}>
+            <ResponsiveContainer width="50%" height={210}>
               <PieChart>
                 <Pie
                   data={riskDonutData}
                   cx="50%"
                   cy="50%"
                   innerRadius={55}
-                  outerRadius={85}
+                  outerRadius={80}
                   paddingAngle={3}
                   dataKey="value"
                   stroke="none"
@@ -245,37 +248,40 @@ export default function DashboardPage() {
                 <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="space-y-3">
+            <div className="flex-1 space-y-2.5">
               {riskDonutData.map((item) => (
-                <div key={item.name} className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-                  <div>
-                    <p className="text-xs text-slate-400">{item.name}</p>
-                    <p className="text-sm font-semibold text-white">{formatNumber(item.value)}</p>
+                <div key={item.name} className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-[2px]" style={{ backgroundColor: item.color }} />
+                    <span className="text-slate-400 font-mono text-[11px] uppercase">{item.name}</span>
                   </div>
+                  <span className="font-mono font-medium text-slate-200">{formatNumber(item.value)}</span>
                 </div>
               ))}
-              <div className="border-t border-navy-600 pt-2">
-                <p className="text-xs text-slate-500">Total Monitored</p>
-                <p className="text-lg font-bold text-white">
+              <div className="border-t border-navy-700/80 pt-2 flex items-center justify-between">
+                <span className="text-[11px] font-mono uppercase text-slate-500">Total Monitored</span>
+                <span className="font-mono text-sm font-semibold text-white">
                   {formatNumber(riskDonutData.reduce((a, b) => a + b.value, 0))}
-                </p>
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Top Fraud Patterns */}
-        <div className="glass-card p-5">
-          <h3 className="mb-4 text-sm font-semibold text-white">Top Fraud Pattern Hits</h3>
-          <ResponsiveContainer width="100%" height={240}>
+        <div className="glass-card p-4">
+          <div className="mb-4 flex items-center justify-between border-b border-navy-700/60 pb-3">
+            <h3 className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-200">Top Fraud Pattern Hits</h3>
+            <span className="text-[10px] font-mono text-slate-400">DETECTION FREQUENCY</span>
+          </div>
+          <ResponsiveContainer width="100%" height={210}>
             <BarChart data={patternData} layout="vertical" margin={{ left: 0, right: 16 }}>
-              <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "#94a3b8" }} width={120} axisLine={false} tickLine={false} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: "#64748b", fontFamily: "monospace" }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "#94a3b8", fontFamily: "monospace" }} width={120} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="hits" radius={[0, 4, 4, 0]} barSize={14}>
+              <Bar dataKey="hits" radius={[0, 2, 2, 0]} barSize={12}>
                 {patternData.map((entry, i) => (
-                  <Cell key={i} fill={entry.fill} fillOpacity={0.8} />
+                  <Cell key={i} fill={entry.fill} fillOpacity={0.85} />
                 ))}
               </Bar>
             </BarChart>
@@ -284,43 +290,48 @@ export default function DashboardPage() {
       </div>
 
       {/* Live Alert Triage Feed */}
-      <div className="glass-card p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Live Alert Triage Feed</h3>
-          <a
+      <div className="glass-card p-4">
+        <div className="mb-3 flex items-center justify-between border-b border-navy-700/60 pb-3">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs font-mono uppercase tracking-wider font-semibold text-slate-200">Live Alert Triage Feed</h3>
+            <span className="rounded-[3px] border border-navy-700 bg-navy-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-400">
+              ACTIVE PRIORITY
+            </span>
+          </div>
+          <Link
             href="/alerts"
-            className="flex items-center gap-1 text-xs font-medium text-accent-glow transition-colors hover:text-white"
+            className="flex items-center gap-1 text-xs font-mono text-indigo-400 transition-colors hover:text-indigo-300"
           >
-            View All <ArrowUpRight className="h-3 w-3" />
-          </a>
+            VIEW QUEUE <ArrowUpRight className="h-3 w-3" />
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Alert ID</th>
-                <th>Title</th>
-                <th>Pattern</th>
-                <th>Severity</th>
-                <th>Risk Score</th>
-                <th>Status</th>
-                <th>Time</th>
-                <th></th>
+                <th>ALERT ID</th>
+                <th>TITLE</th>
+                <th>PATTERN</th>
+                <th>SEVERITY</th>
+                <th>RISK SCORE</th>
+                <th>STATUS</th>
+                <th>TIME</th>
+                <th className="text-right">ACTION</th>
               </tr>
             </thead>
             <tbody>
               {recent_alerts.map((alert: AlertRead) => (
-                <tr key={alert.id} className="cursor-pointer">
-                  <td className="font-mono text-xs text-accent-glow">{alert.alert_number}</td>
-                  <td className="max-w-[200px] truncate text-xs">{alert.title}</td>
+                <tr key={alert.id}>
+                  <td className="font-mono text-xs font-medium text-indigo-400">{alert.alert_number}</td>
+                  <td className="max-w-[200px] truncate text-xs text-slate-200 font-medium">{alert.title}</td>
                   <td>
-                    <span className="badge bg-navy-700 border-navy-600 text-slate-300">
+                    <span className="rounded-[3px] border border-navy-700 bg-navy-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-300">
                       {alert.pattern_type.replace(/_/g, " ")}
                     </span>
                   </td>
                   <td>
                     <span className={cn("badge", getRiskBg(alert.severity))}>
-                      {alert.severity === "CRITICAL" && <AlertTriangle className="h-3 w-3" />}
+                      {alert.severity === "CRITICAL" && <AlertTriangle className="h-2.5 w-2.5" />}
                       {alert.severity}
                     </span>
                   </td>
@@ -332,22 +343,26 @@ export default function DashboardPage() {
                       className={cn(
                         "badge",
                         alert.alert_status === "NEW"
-                          ? "bg-blue-500/15 text-blue-400 border-blue-500/30"
+                          ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
                           : alert.alert_status === "ESCALATED"
-                            ? "bg-red-500/15 text-red-400 border-red-500/30"
+                            ? "bg-red-500/10 text-red-400 border-red-500/30"
                             : alert.alert_status === "UNDER_INVESTIGATION"
-                              ? "bg-amber-500/15 text-amber-400 border-amber-500/30"
-                              : "bg-slate-500/15 text-slate-400 border-slate-500/30"
+                              ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                              : "bg-slate-500/10 text-slate-400 border-slate-500/30"
                       )}
                     >
                       {alert.alert_status.replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="text-xs text-slate-500">{formatTimeAgo(alert.triggered_at)}</td>
-                  <td>
-                    <button className="rounded p-1 text-slate-500 transition-colors hover:bg-navy-700 hover:text-white">
+                  <td className="font-mono text-[11px] text-slate-400">{formatTimeAgo(alert.triggered_at)}</td>
+                  <td className="text-right">
+                    <Link
+                      href="/alerts"
+                      className="inline-flex rounded-[3px] border border-navy-700/60 p-1 text-slate-400 transition-colors hover:bg-navy-800 hover:text-white"
+                      title="Inspect Alert"
+                    >
                       <Eye className="h-3.5 w-3.5" />
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
