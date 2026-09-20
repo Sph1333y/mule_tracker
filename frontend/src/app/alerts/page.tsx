@@ -30,28 +30,31 @@ function TriageModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed left-1/2 top-1/2 z-50 w-[520px] -translate-x-1/2 -translate-y-1/2 animate-slide-up">
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-5">
+      <div className="fixed inset-0 z-40 bg-black/70" onClick={onClose} />
+      <div className="fixed left-1/2 top-1/2 z-50 w-[500px] -translate-x-1/2 -translate-y-1/2 animate-fade-in">
+        <div className="rounded-[4px] border border-navy-700 bg-navy-900/95 p-5 shadow-2xl">
+          <div className="flex items-center justify-between mb-4 border-b border-navy-700/80 pb-3">
             <div>
-              <h3 className="font-display text-lg font-bold text-white">Triage Alert</h3>
-              <p className="mt-0.5 font-mono text-xs text-accent-glow">{alert.alert_number}</p>
+              <h3 className="font-mono text-xs uppercase tracking-wider font-semibold text-white">Triage Disposition</h3>
+              <p className="mt-0.5 font-mono text-xs text-indigo-400">{alert.alert_number}</p>
             </div>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-navy-700 hover:text-white">
-              <X className="h-5 w-5" />
+            <button
+              onClick={onClose}
+              className="rounded-[3px] border border-navy-700/60 p-1 text-slate-400 hover:bg-navy-800 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="glass-card-sm p-3 mb-4">
-            <p className="text-sm text-white font-medium">{alert.title}</p>
-            {alert.description && <p className="mt-1 text-xs text-slate-400">{alert.description}</p>}
+          <div className="rounded-[4px] border border-navy-700/80 bg-navy-950/60 p-3 mb-4">
+            <p className="text-xs text-slate-200 font-medium">{alert.title}</p>
+            {alert.description && <p className="mt-1 text-[11px] font-mono text-slate-400">{alert.description}</p>}
           </div>
 
           {/* Status Selection */}
           <div className="mb-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Update Status
+            <label className="mb-2 block text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              Select Disposition State
             </label>
             <div className="grid grid-cols-2 gap-2">
               {statuses.map((s) => {
@@ -61,14 +64,14 @@ function TriageModal({
                     key={s.value}
                     onClick={() => setStatus(s.value)}
                     className={cn(
-                      "flex items-center gap-2 rounded-lg border p-3 text-left text-xs font-medium transition-all",
+                      "flex items-center gap-2 rounded-[3px] border p-2.5 text-left text-xs font-mono transition-colors",
                       status === s.value
-                        ? "border-accent/50 bg-accent/10 text-white"
-                        : "border-navy-600 bg-navy-800 text-slate-400 hover:border-navy-500"
+                        ? "border-indigo-500 bg-indigo-500/15 text-white font-semibold"
+                        : "border-navy-700 bg-navy-800/60 text-slate-400 hover:border-navy-600 hover:bg-navy-800"
                     )}
                   >
-                    <Icon className={cn("h-4 w-4", s.color)} />
-                    {s.label}
+                    <Icon className={cn("h-3.5 w-3.5", s.color)} />
+                    <span className="truncate">{s.label}</span>
                   </button>
                 );
               })}
@@ -76,32 +79,32 @@ function TriageModal({
           </div>
 
           {/* Notes */}
-          <div className="mb-5">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Analyst Notes
+          <div className="mb-4">
+            <label className="mb-1.5 block text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              Forensic Notes / Justification
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add investigation notes..."
+              placeholder="Record forensic evidence, rationale, or instructions..."
               rows={3}
-              className="w-full rounded-lg border border-navy-600 bg-navy-800 p-3 text-sm text-white placeholder:text-slate-600 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent resize-none"
+              className="w-full rounded-[3px] border border-navy-700 bg-navy-950 p-2.5 font-mono text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 focus:outline-none resize-none"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-2 border-t border-navy-700/80 pt-3">
             <button
               onClick={onClose}
-              className="rounded-lg border border-navy-600 px-4 py-2 text-sm text-slate-400 hover:bg-navy-700 hover:text-white"
+              className="rounded-[3px] border border-navy-700 bg-navy-800/80 px-3 py-1.5 font-mono text-xs text-slate-300 hover:bg-navy-700 hover:text-white transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={() => onTriage(alert.id, status, notes)}
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-glow hover:bg-accent/90 transition-all"
+              className="rounded-[3px] bg-indigo-600 px-3.5 py-1.5 font-mono text-xs font-medium text-white hover:bg-indigo-500 transition-colors"
             >
-              Update Triage
+              Commit Disposition
             </button>
           </div>
         </div>
@@ -135,61 +138,68 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="page-header flex justify-between items-start">
-        <p className="page-subtitle">
-          Manage and triage suspicious activity alerts with severity-based prioritization
-        </p>
-        <div className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold border",
-          isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-slate-500/10 text-slate-400 border-slate-500/20"
-        )}>
-          <span className="relative flex h-1.5 w-1.5">
-            {isLive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
-            <span className={cn("relative inline-flex rounded-full h-1.5 w-1.5", isLive ? "bg-emerald-500" : "bg-slate-500")}></span>
-          </span>
-          {isLive ? "LIVE" : "OFFLINE / MOCK"}
+      {/* Page Header */}
+      <div className="flex justify-between items-start border-b border-navy-700/60 pb-4">
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-white">Suspicious Alert Triage Queue</h1>
+          <p className="mt-0.5 text-xs text-slate-400">
+            Surveillance alert prioritization, disposition workflows, and forensic escalation
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <div className={cn(
+            "flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[10px] font-mono border",
+            isLive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-slate-800/80 text-slate-400 border-slate-700"
+          )}>
+            <span className={cn("h-1.5 w-1.5 rounded-full", isLive ? "bg-emerald-400" : "bg-slate-400")} />
+            {isLive ? "QUEUE ACTIVE" : "OFFLINE / MOCK"}
+          </div>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="glass-card flex flex-wrap items-center gap-3 p-4">
-        <Filter className="h-4 w-4 text-slate-500" />
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">Severity:</span>
+      <div className="glass-card flex flex-wrap items-center gap-3 p-3">
+        <Filter className="h-3.5 w-3.5 text-slate-500 shrink-0" />
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-mono uppercase text-slate-500 mr-1">Severity:</span>
           {["", "CRITICAL", "HIGH", "MEDIUM", "LOW"].map((s) => (
             <button
               key={s}
               onClick={() => setSeverityFilter(s)}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+                "rounded-[3px] px-2.5 py-1 text-[11px] font-mono font-medium transition-colors",
                 severityFilter === s
-                  ? s === "CRITICAL" ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                    : s === "HIGH" ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                    : s === "MEDIUM" ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                    : s === "LOW" ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                    : "bg-accent/20 text-accent-glow border border-accent/30"
-                  : "border border-navy-600 bg-navy-800 text-slate-400 hover:text-white"
+                  ? s === "CRITICAL"
+                    ? "bg-red-500/15 text-red-400 border border-red-500/40"
+                    : s === "HIGH"
+                      ? "bg-amber-500/15 text-amber-400 border border-amber-500/40"
+                      : s === "MEDIUM"
+                        ? "bg-blue-500/15 text-blue-400 border border-blue-500/40"
+                        : s === "LOW"
+                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40"
+                          : "bg-indigo-600 text-white border border-indigo-500"
+                  : "border border-navy-700 bg-navy-800/60 text-slate-400 hover:text-slate-200 hover:bg-navy-800"
               )}
             >
-              {s || "All"}
+              {s || "ALL"}
             </button>
           ))}
         </div>
-        <div className="h-4 w-px bg-navy-600" />
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">Status:</span>
+        <div className="h-4 w-px bg-navy-700 hidden sm:block" />
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-mono uppercase text-slate-500 mr-1">Status:</span>
           {["", "NEW", "UNDER_INVESTIGATION", "ESCALATED"].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+                "rounded-[3px] px-2.5 py-1 text-[11px] font-mono font-medium transition-colors",
                 statusFilter === s
-                  ? "bg-accent/20 text-accent-glow border border-accent/30"
-                  : "border border-navy-600 bg-navy-800 text-slate-400 hover:text-white"
+                  ? "bg-indigo-600 text-white border border-indigo-500"
+                  : "border border-navy-700 bg-navy-800/60 text-slate-400 hover:text-slate-200 hover:bg-navy-800"
               )}
             >
-              {s ? s.replace(/_/g, " ") : "All"}
+              {s ? s.replace(/_/g, " ") : "ALL"}
             </button>
           ))}
         </div>
@@ -198,52 +208,52 @@ export default function AlertsPage() {
       {/* Table */}
       <div className="glass-card overflow-hidden">
         {loading ? (
-          <div className="space-y-3 p-5">
-            {[...Array(8)].map((_, i) => <div key={i} className="skeleton h-10 rounded-lg" />)}
+          <div className="space-y-2 p-4">
+            {[...Array(8)].map((_, i) => <div key={i} className="skeleton h-9 rounded" />)}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Alert ID</th>
-                  <th>Title</th>
-                  <th>Pattern</th>
-                  <th>Severity</th>
-                  <th>Risk Score</th>
-                  <th>Status</th>
-                  <th>Triggered</th>
-                  <th>Actions</th>
+                  <th>ALERT ID</th>
+                  <th>INCIDENT TITLE</th>
+                  <th>PATTERN</th>
+                  <th>SEVERITY</th>
+                  <th>RISK SCORE</th>
+                  <th>STATUS</th>
+                  <th>TRIGGERED</th>
+                  <th className="text-right">ACTION</th>
                 </tr>
               </thead>
               <tbody>
                 {alerts.map((alert) => (
                   <tr key={alert.id}>
-                    <td className="font-mono text-xs text-accent-glow">{alert.alert_number}</td>
-                    <td className="max-w-[220px] truncate text-xs text-white">{alert.title}</td>
+                    <td className="font-mono text-xs font-medium text-indigo-400">{alert.alert_number}</td>
+                    <td className="max-w-[220px] truncate text-xs text-slate-200 font-medium">{alert.title}</td>
                     <td>
-                      <span className="badge bg-navy-700 border-navy-600 text-slate-300 text-[10px]">
+                      <span className="rounded-[3px] border border-navy-700 bg-navy-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-300">
                         {alert.pattern_type.replace(/_/g, " ")}
                       </span>
                     </td>
                     <td>
                       <span className={cn("badge", getRiskBg(alert.severity))}>
-                        {alert.severity === "CRITICAL" && <AlertTriangle className="h-3 w-3" />}
+                        {alert.severity === "CRITICAL" && <AlertTriangle className="h-2.5 w-2.5" />}
                         {alert.severity}
                       </span>
                     </td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-16 overflow-hidden rounded-full bg-navy-700">
+                        <div className="h-1.5 w-16 overflow-hidden rounded-[2px] bg-navy-800 border border-navy-700/50">
                           <div
-                            className="h-full rounded-full"
+                            className="h-full transition-all duration-300"
                             style={{
                               width: `${alert.risk_score}%`,
                               backgroundColor: alert.risk_score >= 80 ? "#ef4444" : alert.risk_score >= 60 ? "#f59e0b" : "#3b82f6",
                             }}
                           />
                         </div>
-                        <span className="text-xs font-medium text-slate-300">{alert.risk_score}</span>
+                        <span className="font-mono text-[11px] font-medium text-slate-300">{alert.risk_score}</span>
                       </div>
                     </td>
                     <td>
@@ -251,19 +261,19 @@ export default function AlertsPage() {
                         {alert.alert_status.replace(/_/g, " ")}
                       </span>
                     </td>
-                    <td className="text-xs text-slate-500">{formatTimeAgo(alert.triggered_at)}</td>
-                    <td>
+                    <td className="font-mono text-[11px] text-slate-400">{formatTimeAgo(alert.triggered_at)}</td>
+                    <td className="text-right">
                       <button
                         onClick={() => setTriageTarget(alert)}
                         disabled={triaging === alert.id}
                         className={cn(
-                          "rounded-lg border px-3 py-1 text-xs transition-colors",
+                          "rounded-[3px] border px-2.5 py-1 font-mono text-[11px] font-medium transition-colors",
                           triaging === alert.id
-                            ? "border-navy-600 bg-navy-700 text-slate-400 cursor-not-allowed"
-                            : "border-navy-600 bg-navy-800 text-accent-glow hover:bg-accent/10"
+                            ? "border-navy-700 bg-navy-800 text-slate-500 cursor-not-allowed"
+                            : "border-navy-700 bg-navy-800/80 text-indigo-400 hover:bg-navy-700 hover:text-white"
                         )}
                       >
-                        {triaging === alert.id ? "Updating..." : "Triage"}
+                        {triaging === alert.id ? "UPDATING..." : "TRIAGE"}
                       </button>
                     </td>
                   </tr>
@@ -274,9 +284,9 @@ export default function AlertsPage() {
         )}
 
         {pagination && (
-          <div className="flex items-center justify-between border-t border-navy-700/50 px-4 py-3">
-            <p className="text-xs text-slate-500">
-              {pagination.total_items} total alerts
+          <div className="flex items-center justify-between border-t border-navy-700/60 px-4 py-2.5 bg-navy-900/40">
+            <p className="font-mono text-[11px] text-slate-400">
+              TOTAL RECORDS: {pagination.total_items}
             </p>
           </div>
         )}
