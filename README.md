@@ -1400,7 +1400,7 @@ the Free Software Foundation, either version 3 of the License, or
 │ 👤 Venkatesan S    → Machine Learning                        │
 │ 👤 Athishwar K     → Backend                                 │
 │ 👤 Karmugilan R    → Graph Intelligence                      │
-│ 👤 Sanjay B        → Frontend                                │
+│ 👤 Sanjay B        → Frontend & Machine Learning             │
 │ 👤 Siva            → UI/UX Design                            │
 │ 👤 Sakthi Prakash  → Frontend                                │
 └──────────────────────────────────────────────────────────────┘
