@@ -52,59 +52,47 @@ body {
 
 @layer components {
   .glass-card {
-    @apply relative rounded-xl border border-white/[0.06] bg-navy-800/80 shadow-glass;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    @apply relative rounded-md border border-navy-700/80 bg-navy-900/95 shadow-sm;
   }
 
   .glass-card-hover {
-    @apply glass-card transition-all duration-300;
+    @apply glass-card transition-colors duration-150;
   }
   .glass-card-hover:hover {
-    @apply border-white/[0.12] shadow-lg;
-    transform: translateY(-1px);
+    @apply border-navy-600 bg-navy-850;
   }
 
   .glass-card-sm {
-    @apply relative rounded-lg border border-white/[0.05] bg-navy-800/60 shadow-glass-sm;
-    backdrop-filter: blur(12px);
+    @apply relative rounded border border-navy-700/70 bg-navy-900/80 shadow-none;
   }
 
-  /* KPI Card glow variants */
+  /* Enterprise KPI Cards — Data-First, Zero Glow */
   .kpi-card {
-    @apply glass-card p-5 transition-all duration-300;
+    @apply relative rounded-md border border-navy-700/80 bg-navy-900/95 p-4 transition-colors;
   }
   .kpi-card:hover {
-    @apply border-white/[0.1];
-    transform: translateY(-2px);
+    @apply border-navy-600;
   }
 
   .kpi-card-critical {
-    @apply kpi-card;
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  .kpi-card-critical:hover {
-    box-shadow: 0 0 50px rgba(239, 68, 68, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    @apply kpi-card border-l-2 border-l-red-500 border-navy-700/80;
   }
 
   .kpi-card-amber {
-    @apply kpi-card;
-    box-shadow: 0 0 40px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply kpi-card border-l-2 border-l-amber-500 border-navy-700/80;
   }
 
   .kpi-card-blue {
-    @apply kpi-card;
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply kpi-card border-l-2 border-l-blue-500 border-navy-700/80;
   }
 
   .kpi-card-emerald {
-    @apply kpi-card;
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    @apply kpi-card border-l-2 border-l-emerald-500 border-navy-700/80;
   }
 
-  /* Badge base */
+  /* Badge base — Institutional Monospace Tag */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-[4px] border px-2 py-0.5 text-[11px] font-mono font-medium tracking-wide uppercase;
   }
 
   /* Skeleton loading */
@@ -131,34 +119,34 @@ body {
     @apply mt-1 text-sm text-slate-400;
   }
 
-  /* Data table */
+  /* Data table — Institutional Density */
   .data-table {
-    @apply w-full text-sm;
+    @apply w-full text-xs text-left;
   }
   .data-table thead {
-    @apply border-b border-navy-600;
+    @apply border-b border-navy-700/80 bg-navy-950/60;
   }
   .data-table th {
-    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400;
+    @apply px-3.5 py-2.5 text-left text-[11px] font-mono font-semibold uppercase tracking-wider text-slate-400;
   }
   .data-table td {
-    @apply px-4 py-3 text-slate-300;
+    @apply px-3.5 py-2.5 text-slate-300;
   }
   .data-table tbody tr {
-    @apply border-b border-navy-700/50 transition-colors duration-150;
+    @apply border-b border-navy-800/80 transition-colors duration-150;
   }
   .data-table tbody tr:hover {
-    @apply bg-navy-700/30;
+    @apply bg-navy-800/40;
   }
 
   /* Slide-over panel */
   .slide-over-backdrop {
-    @apply fixed inset-0 z-40 bg-black/50;
-    backdrop-filter: blur(4px);
+    @apply fixed inset-0 z-40 bg-black/60;
+    backdrop-filter: blur(2px);
   }
   .slide-over-panel {
-    @apply fixed right-0 top-0 z-50 h-full w-[480px] border-l border-navy-600 bg-navy-900 shadow-2xl;
-    animation: slideInRight 0.3s ease-out;
+    @apply fixed right-0 top-0 z-50 h-full w-[480px] border-l border-navy-700 bg-navy-900 shadow-xl;
+    animation: slideInRight 0.25s ease-out;
   }
 }
 
