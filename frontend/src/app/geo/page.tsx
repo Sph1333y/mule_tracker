@@ -47,30 +47,38 @@ export default function GeoPage() {
   if (loading || !data || !leafletReady) {
     return (
       <div className="space-y-5 animate-fade-in">
-        <div className="skeleton h-12 rounded-xl" />
-        <div className="skeleton h-[550px] rounded-xl" />
+        <div className="skeleton h-10 rounded" />
+        <div className="skeleton h-[560px] rounded" />
       </div>
     );
   }
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <div className="page-header">
-        <p className="page-subtitle">
-          Geographic fraud density heatmaps and impossible travel velocity alerts across India
-        </p>
+      {/* Page Header */}
+      <div className="flex justify-between items-start border-b border-navy-700/60 pb-4">
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-white">Geospatial Intelligence Map</h1>
+          <p className="mt-0.5 text-xs text-slate-400">
+            Geographic fraud density heatmaps and impossible travel velocity vectors across Indian financial corridors
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] text-[10px] font-mono border bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          GEO-INTEL ACTIVE
+        </div>
       </div>
 
       {/* Map + Sidebar */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         {/* Map */}
-        <div className="glass-card overflow-hidden" style={{ height: 560 }}>
+        <div className="glass-card overflow-hidden border border-navy-700/80 rounded-md" style={{ height: 580 }}>
           <MapContainer
             center={[20.5937, 78.9629]}
             zoom={5}
             scrollWheelZoom={true}
             style={{ height: "100%", width: "100%" }}
-            className="rounded-xl"
+            className="rounded-none"
           >
             <TileLayer
               attribution='&copy; <a href="https://carto.com/">CARTO</a>'
@@ -86,14 +94,14 @@ export default function GeoPage() {
                 pathOptions={{
                   color: cluster.mule_count >= 25 ? "#ef4444" : cluster.mule_count >= 15 ? "#f59e0b" : "#3b82f6",
                   fillColor: cluster.mule_count >= 25 ? "#ef4444" : cluster.mule_count >= 15 ? "#f59e0b" : "#3b82f6",
-                  fillOpacity: 0.3,
+                  fillOpacity: 0.35,
                   weight: 2,
                 }}
               >
                 <Popup>
-                  <div className="text-center">
-                    <p className="text-sm font-bold">{cluster.city}</p>
-                    <p className="text-xs">{cluster.mule_count} Active Mules</p>
+                  <div className="p-1 text-center font-mono">
+                    <p className="text-xs font-bold text-slate-900">{cluster.city}</p>
+                    <p className="text-[11px] text-slate-700">{cluster.mule_count} Active Mule Accounts</p>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -111,8 +119,8 @@ export default function GeoPage() {
                   pathOptions={{
                     color: "#ef4444",
                     weight: 2,
-                    dashArray: "8, 8",
-                    opacity: 0.7,
+                    dashArray: "6, 6",
+                    opacity: 0.8,
                   }}
                 />
               );
@@ -124,50 +132,54 @@ export default function GeoPage() {
         <div className="space-y-4">
           {/* Legend */}
           <div className="glass-card p-4">
-            <h3 className="mb-3 text-sm font-semibold text-white">Map Legend</h3>
-            <div className="space-y-2 text-xs">
+            <h3 className="mb-3 text-xs font-mono uppercase tracking-wider font-semibold text-slate-200 border-b border-navy-700/60 pb-2">
+              Corridor Legend
+            </h3>
+            <div className="space-y-2 text-xs font-mono">
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-red-500/40 ring-2 ring-red-500" />
-                <span className="text-slate-300">Critical Zone (25+ mules)</span>
+                <span className="h-2.5 w-2.5 rounded-[2px] bg-red-500" />
+                <span className="text-slate-300">Critical Density (25+ Mules)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-amber-500/40 ring-2 ring-amber-500" />
-                <span className="text-slate-300">High Risk Zone (15-24)</span>
+                <span className="h-2.5 w-2.5 rounded-[2px] bg-amber-500" />
+                <span className="text-slate-300">High Risk Hub (15–24 Mules)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-blue-500/40 ring-2 ring-blue-500" />
-                <span className="text-slate-300">Moderate Zone (&lt;15)</span>
+                <span className="h-2.5 w-2.5 rounded-[2px] bg-blue-500" />
+                <span className="text-slate-300">Monitored Zone (&lt;15 Mules)</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-4 w-6 border-t-2 border-dashed border-red-500" />
-                <span className="text-slate-300">Impossible Travel Arc</span>
+                <span className="h-3 w-5 border-t-2 border-dashed border-red-500 inline-block" />
+                <span className="text-slate-300">Impossible Velocity Arc</span>
               </div>
             </div>
           </div>
 
           {/* Impossible Travel Alerts */}
           <div className="glass-card p-4">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-              <AlertTriangle className="h-4 w-4 text-red-400" />
-              Impossible Travel Alerts
+            <h3 className="mb-3 flex items-center gap-2 text-xs font-mono uppercase tracking-wider font-semibold text-slate-200 border-b border-navy-700/60 pb-2">
+              <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+              Impossible Travel Vectors
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
               {data.impossible_travel_alerts.map((alert, i) => (
-                <div key={i} className="glass-card-sm p-3">
+                <div key={i} className="rounded-[4px] border border-navy-700/80 bg-navy-900/60 p-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-accent-glow">{alert.account_number}</span>
-                    <span className="badge bg-red-500/15 text-red-400 border-red-500/30">FLAGGED</span>
+                    <span className="font-mono text-xs font-medium text-indigo-400">{alert.account_number}</span>
+                    <span className="rounded-[3px] border border-red-500/30 bg-red-500/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-red-400">
+                      FLAGGED
+                    </span>
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-slate-300">
-                    <MapPinIcon className="h-3 w-3 text-blue-400" />
+                  <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-200 font-mono">
+                    <MapPinIcon className="h-3 w-3 text-blue-400 shrink-0" />
                     <span>{alert.origin}</span>
-                    <Navigation className="h-3 w-3 text-red-400" />
+                    <Navigation className="h-3 w-3 text-red-400 shrink-0" />
                     <span>{alert.destination}</span>
                   </div>
-                  <div className="mt-1.5 flex items-center gap-3 text-[11px] text-slate-500">
+                  <div className="mt-1 flex items-center gap-3 text-[10px] font-mono text-slate-400">
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {alert.time_gap_minutes} min gap
+                      <Clock className="h-2.5 w-2.5" />
+                      {alert.time_gap_minutes}m delta
                     </span>
                     <span>{alert.distance_km.toLocaleString()} km</span>
                   </div>
@@ -178,24 +190,26 @@ export default function GeoPage() {
 
           {/* Regional Summary */}
           <div className="glass-card p-4">
-            <h3 className="mb-3 text-sm font-semibold text-white">Regional Summary</h3>
+            <h3 className="mb-3 text-xs font-mono uppercase tracking-wider font-semibold text-slate-200 border-b border-navy-700/60 pb-2">
+              Regional Concentration
+            </h3>
             <div className="space-y-2">
               {data.regional_clusters
                 .sort((a, b) => b.mule_count - a.mule_count)
                 .map((cluster) => (
                   <div key={cluster.city} className="flex items-center justify-between text-xs">
-                    <span className="text-slate-300">{cluster.city}</span>
+                    <span className="font-mono text-slate-300">{cluster.city}</span>
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-navy-700">
+                      <div className="h-1.5 w-20 overflow-hidden rounded-[2px] bg-navy-800 border border-navy-700/50">
                         <div
-                          className="h-full rounded-full"
+                          className="h-full transition-all duration-300"
                           style={{
                             width: `${(cluster.mule_count / 34) * 100}%`,
                             backgroundColor: cluster.mule_count >= 25 ? "#ef4444" : cluster.mule_count >= 15 ? "#f59e0b" : "#3b82f6",
                           }}
                         />
                       </div>
-                      <span className="w-6 text-right font-medium text-white">{cluster.mule_count}</span>
+                      <span className="w-5 text-right font-mono font-semibold text-slate-200">{cluster.mule_count}</span>
                     </div>
                   </div>
                 ))}
